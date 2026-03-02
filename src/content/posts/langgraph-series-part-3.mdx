@@ -1,0 +1,172 @@
+---
+title: "[LangGraph Series] Part 3: Từ Chatbot Thành Cố Vấn Toàn Năng — Multi-Agent và LangGraph"
+date: "2025-05-08"
+tags: ["langgraph", "multi-agent", "ai", "llm"]
+author: "Hung Nguyen"
+excerpt: "Khám phá cách xây dựng hệ thống multi-agent hiệu quả với LangGraph — từ Network, Supervisor đến Hierarchical Architecture."
+coverImage: "/images/covers/langgraph-series-part-3.png"
+draft: false
+---
+
+Chào mọi người đến với bài viết thứ 3 trong series ***Hành Trình Khám Phá LangGraph: Muốn "Hero" bạn phải bắt đầu từ "Zero"***. Với 2 bài viết trước mình đã chia sẻ với các bạn khá kĩ về công cụ xây dựng graph và cụ thể trong một bài toán chatbot AI sẽ cần phải làm gì khi bạn muốn xây dựng cấu trúc hệ thống ở dạng đồ thị. Bên cạnh đó chúng ta nắm được về một cơ chế quan trọng trong quá trình vận hành một graph system đó chính là HITL (Human-in-the-loop).
+
+- [[LangGraph Series] Part 1: Master of Graph với LangGraph trong Xây dựng Chatbot AI](https://viblo.asia/p/langgraph-series-part-1-master-of-graph-voi-langgraph-trong-xay-dung-chatbot-ai-gwd43wl34X9)
+- [[LangGraph Series] Part 2: Bàn tay con người giữa cỗ máy - Human-In-The-Loop](https://viblo.asia/p/langgraph-series-part-2-ban-tay-con-nguoi-giua-co-may-human-in-the-loop-Ny0VG2ezLPA)
+
+Giờ thì hãy cùng mình tới chương cuối của series này thôi nào — **MULTI-AGENT**!
+
+## Motivation
+
+Trong thời đại AI phát triển nhanh chóng, chatbot truyền thống thường bị giới hạn bởi khả năng xử lý thông tin một chiều và phạm vi kiến thức hẹp. Người dùng ngày càng mong muốn những trợ lý ảo không chỉ trả lời câu hỏi đơn giản mà còn có thể phân tích, tổng hợp và đưa ra lời khuyên toàn diện như một "cố vấn" thực thụ.
+
+Chính vì thế, mình bắt đầu tìm hiểu và thử nghiệm **multi-agent systems** — nơi mỗi agent đảm nhận một nhiệm vụ chuyên biệt nhưng có thể phối hợp hiệu quả để giải quyết những vấn đề phức tạp hơn.
+
+## Introduction
+
+Ứng dụng AI ngày càng thông minh và linh hoạt, **agent** — những hệ thống sử dụng LLM để điều phối luồng xử lý — đang trở thành một phần cốt lõi trong nhiều giải pháp. Tuy nhiên, khi các agent phát triển ngày càng phức tạp, chúng dễ rơi vào tình trạng khó quản lý, khó mở rộng.
+
+Chẳng hạn, một agent đơn lẻ có thể:
+
+- Sở hữu quá nhiều công cụ và không biết lựa chọn đúng công cụ vào đúng thời điểm.
+- Phải xử lý một lượng lớn ngữ cảnh vượt quá khả năng theo dõi.
+- Cần đảm nhiệm nhiều vai trò chuyên biệt cùng lúc.
+
+Việc sử dụng multi-agent system mang lại ba lợi ích chính:
+
+- **Tính mô-đun (Modularity):** Dễ dàng phát triển, kiểm thử và bảo trì từng phần.
+- **Tính chuyên môn hóa (Specialization):** Mỗi agent tập trung vào một lĩnh vực cụ thể.
+- **Khả năng kiểm soát (Control):** Kiểm soát rõ ràng cách các agent tương tác.
+
+## Multi-agent Architectures
+
+### Network Architecture — Kết nối ngang hàng
+
+**Network** là kiến trúc đơn giản và linh hoạt nhất. Mọi agent đều là nodes trong đồ thị, và bất kỳ agent nào cũng có thể giao tiếp với bất kỳ agent nào khác — tạo thành mạng lưới many-to-many.
+
+```python
+from langgraph.graph import StateGraph, Command
+from typing import Literal
+
+def agent_a(state) -> Command[Literal["agent_b", "agent_c"]]:
+    next_agent = "agent_b" if "use_b" in state else "agent_c"
+    return Command(goto=next_agent)
+
+def agent_b(state):
+    print("Agent B is working...")
+    return Command(goto="agent_c")
+
+def agent_c(state):
+    print("Agent C is finalizing...")
+    return None
+
+builder = StateGraph()
+builder.add_node("agent_a", agent_a)
+builder.add_node("agent_b", agent_b)
+builder.add_node("agent_c", agent_c)
+builder.set_entry_point("agent_a")
+graph = builder.compile()
+```
+
+### Supervisor Architecture
+
+**Supervisor** là kiến trúc phổ biến khi bạn muốn có một trung tâm điều phối. Supervisor sử dụng LLM để phân tích state hiện tại và quyết định agent tiếp theo.
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, Command
+
+def supervisor(state) -> Command[Literal["agent_a", "agent_b", "agent_c"]]:
+    query = state.get("query", "")
+    if "summary" in query:
+        next_agent = "agent_a"
+    elif "calculate" in query:
+        next_agent = "agent_b"
+    else:
+        next_agent = "agent_c"
+    return Command(goto=next_agent)
+
+def agent_a(state):
+    print("Summarizing content...")
+    return Command(goto="supervisor", update={"summary": "This is a summary."})
+
+def agent_b(state):
+    print("Calculating result...")
+    return Command(goto="supervisor", update={"result": 42})
+
+def agent_c(state):
+    print("Handling generic queries...")
+    return None
+
+builder = StateGraph()
+builder.add_node("supervisor", supervisor)
+builder.add_node("agent_a", agent_a)
+builder.add_node("agent_b", agent_b)
+builder.add_node("agent_c", agent_c)
+builder.set_entry_point("supervisor")
+graph = builder.compile()
+```
+
+### Supervisor (Tool-Calling)
+
+Supervisor (tool-calling) là biến thể hiện đại khi các sub-agent được đóng gói như **tools**, và supervisor agent (một LLM chính) gọi các tool thông qua cơ chế **function/tool-calling**.
+
+```python
+from langchain_core.tools import tool
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_openai import ChatOpenAI
+
+@tool
+def search_web(query: str) -> str:
+    """Tìm kiếm thông tin từ web."""
+    return f"Kết quả tìm kiếm cho '{query}'"
+
+@tool
+def calculate(expression: str) -> float:
+    """Tính toán biểu thức."""
+    return eval(expression)
+
+@tool
+def summarize(text: str) -> str:
+    """Tóm tắt nội dung."""
+    return f"Tóm tắt: {text[:50]}..."
+
+llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+tools = [search_web, calculate, summarize]
+agent = create_tool_calling_agent(llm, tools)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+executor.invoke({"input": "Tìm thông tin về LangGraph và tính 123 * 456"})
+```
+
+| Đặc điểm | Supervisor truyền thống | Supervisor (tool-calling) |
+| --- | --- | --- |
+| Routing | Dùng `Command(goto=...)` | Dùng function-calling JSON |
+| Các sub-agent | Nodes độc lập | Tools gọi qua structured schema |
+| Luồng điều phối | Manual hoặc rule-based | Tự động nhờ reasoning của LLM |
+| Mở rộng | Tốn công điều chỉnh graph | Thêm tool là xong |
+
+### Hierarchical Architecture — Cấu trúc phân tầng
+
+Khi số lượng agent tăng lên, một supervisor duy nhất không đủ. Hierarchical architecture tổ chức agents thành các nhóm chức năng, mỗi nhóm có supervisor riêng, và một top-level supervisor điều phối giữa các supervisor cấp dưới.
+
+| Ưu điểm | Mô tả |
+| --- | --- |
+| Phân chia trách nhiệm rõ ràng | Mỗi supervisor chỉ xử lý một domain nhất định |
+| Giảm tải nhận thức cho LLM chính | Top supervisor chỉ điều phối tổng thể |
+| Mở rộng dễ dàng | Thêm supervisor/team mới mà không phức tạp hóa hệ thống |
+
+## Tổng kết
+
+Trong bài viết này, chúng ta đã đi qua bốn kiến trúc phổ biến trong LangGraph:
+
+- **Network architecture** — Kết nối ngang hàng, linh hoạt cao.
+- **Supervisor architecture** — Agent trung tâm điều phối, kiểm soát luồng chặt chẽ.
+- **Supervisor with tool-calling** — LLM gọi agents dưới dạng tool, dễ mở rộng.
+- **Hierarchical Architecture** — Supervisor đa cấp cho hệ thống lớn và phức tạp.
+
+Cảm ơn bạn đã đọc bài viết của mình, hy vọng series này sẽ giúp ích cho bạn trong quá trình làm chủ multi-agent với LangGraph!
+
+## Tài liệu tham khảo
+
+- [LangGraph - Multi-Agent](https://langchain-ai.github.io/langgraph/concepts/multi_agent/)
+- [LangGraph: Multi-Agent Workflows](https://blog.langchain.dev/langgraph-multi-agent-workflows/)
+- [Multi-Agent](https://langchain-ai.github.io/langgraph/agents/multi-agent/)

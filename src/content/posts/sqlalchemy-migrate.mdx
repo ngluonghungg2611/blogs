@@ -1,0 +1,136 @@
+---
+title: "SQLAlchemy to Migrate Database in Project"
+date: "2023-01-22"
+tags: ["python", "database", "sqlalchemy", "alembic"]
+author: "Hung Nguyen"
+excerpt: "Cách sử dụng SQLAlchemy trong một dự án Python và quản lý các phiên bản database với Alembic."
+draft: false
+---
+
+Chào các bạn đến với bài viết của mình. Trong một dự án AI có yêu cầu lưu trữ dữ liệu, việc sử dụng cơ sở dữ liệu là cần thiết. Mình đã chọn **SQLAlchemy** để thực hiện việc này.
+
+## SQLAlchemy
+
+![SQLAlchemy](https://images.viblo.asia/31c1daaa-fddd-4f61-939c-89d893b61f0f.jpg)
+
+SQLAlchemy là khái niệm phổ biến trong Python nếu bạn sử dụng đến database trong một dự án. Nó được xây dựng để làm việc với cơ sở dữ liệu quan hệ (RDBMS) như MySQL, PostgreSQL, SQLite và nhiều loại khác.
+
+Hai phần quan trọng nhất của SQLAlchemy là **ORM** và **Core**.
+
+## 1. ORM
+
+ORM giúp chúng ta dễ dàng thao tác với Database lớn, dễ code và dễ maintain. Bạn có thể tương tác với cơ sở dữ liệu thông qua các objects Python thay vì phải viết SQL thủ công.
+
+**Declarative Base:**
+
+```python
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()
+```
+
+**Class Mapping:**
+
+```python
+from sqlalchemy import Column, Integer, String
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    age = Column(Integer)
+```
+
+**Session:**
+
+```python
+from sqlalchemy.orm import sessionmaker
+Session = sessionmaker(bind=engine)
+session = Session()
+```
+
+**Query:**
+
+```python
+users = session.query(User).all()
+for user in users:
+    print(user.name, user.age)
+```
+
+## 2. SQLAlchemy Core
+
+SQLAlchemy Core là lớp trừu tượng thấp hơn, cho phép viết các câu lệnh SQL trực tiếp nhưng vẫn tận dụng được các tính năng quản lý kết nối.
+
+**Engine:**
+
+```python
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///example.db')
+```
+
+**Table:**
+
+```python
+from sqlalchemy import Table, Column, Integer, String, MetaData
+
+metadata = MetaData()
+users = Table('users', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('name', String),
+    Column('age', Integer)
+)
+```
+
+## 3. So sánh Core và ORM
+
+| | SQLAlchemy Core | ORM |
+|---|---|---|
+| Độ linh hoạt | Cao, làm việc trực tiếp với SQL | Trung bình |
+| Dễ sử dụng | Cần hiểu rõ SQL | Dễ, làm việc với Python objects |
+| Phù hợp | Tác vụ phức tạp, cần tùy chỉnh cao | CRUD thông thường với OOP |
+
+## 4. Kết hợp Core và ORM
+
+```python
+# Sử dụng ORM để quản lý đối tượng
+new_user = User(name='Alice', age=30)
+session.add(new_user)
+session.commit()
+
+# Sử dụng Core để thực hiện truy vấn tùy chỉnh
+from sqlalchemy import select
+stmt = select([users]).where(users.c.age > 20)
+result = engine.execute(stmt)
+for row in result:
+    print(row)
+```
+
+## Migrate Database
+
+### Migrate Database là gì
+
+Database migration là quá trình quản lý và áp dụng các thay đổi đối với cấu trúc của cơ sở dữ liệu trong suốt vòng đời của một dự án. Các thay đổi có thể bao gồm:
+
+- Thêm, sửa, xóa bảng
+- Thêm, sửa, xóa cột
+- Thay đổi kiểu dữ liệu của cột
+- Thêm, sửa, xóa các ràng buộc (constraints)
+
+### Tại sao cần migrate database?
+
+- **Phát triển và Bảo trì:** Khi ứng dụng phát triển, yêu cầu về dữ liệu cũng thay đổi. Migration giúp cập nhật cơ sở dữ liệu mà không gây gián đoạn.
+- **Quản lý Phiên bản:** Cho phép theo dõi các thay đổi và quay lại phiên bản trước nếu cần.
+- **Tự động hóa:** Migration có thể được tự động hóa để áp dụng các thay đổi an toàn trên nhiều môi trường.
+
+### Alembic: Công cụ Migration cho SQLAlchemy
+
+![Alembic](https://images.viblo.asia/73685248-824b-4b3b-a9d7-cb40d7af45d1.jpg)
+
+SQLAlchemy thường được sử dụng cùng với **Alembic** — công cụ quản lý migration mạnh mẽ. Alembic cho phép:
+
+- Tạo và quản lý các phiên bản migration
+- Tự động tạo migration dựa trên sự khác biệt giữa ORM và database hiện tại
+- Áp dụng và quay lui migration
+
+## Tổng kết
+
+Trong bài viết này mình đã chia sẻ về cách sử dụng SQLAlchemy trong một dự án Python và quản lý các phiên bản database. Đây chỉ là phần 1, ở phần tiếp theo mình sẽ chia sẻ kĩ hơn về cách khởi tạo database bằng PostgreSQL và cài đặt chi tiết Alembic. Cảm ơn tất cả các bạn đã dành thời gian cho bài viết!

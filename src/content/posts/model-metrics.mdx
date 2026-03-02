@@ -1,0 +1,66 @@
+---
+title: "Metrics đánh giá các mô hình và phương pháp lựa chọn mô hình dựa vào metrics"
+date: "2023-01-22"
+tags: ["machine-learning", "metrics", "model-evaluation"]
+author: "Hung Nguyen"
+excerpt: "Các phương pháp đánh giá mô hình: Accuracy, Precision, Recall và F1-Score — ý nghĩa và cách sử dụng."
+coverImage: "/images/covers/model-metrics.png"
+draft: false
+---
+
+## Overviews
+
+Trong quá trình xây dựng mô hình học máy, làm sao để ta có thể đánh giá mô hình là tốt khi trải qua thời gian huấn luyện? Hãy cùng tôi tìm hiểu các phương thức đánh giá quan trọng và ý nghĩa của chúng.
+
+## Các metrics quan trọng và phổ biến
+
+### 1. Accuracy (Độ chính xác)
+
+Accuracy là thước đo giữa số dự đoán đúng với tổng số lượng mẫu dự đoán:
+
+$$
+Acc = \frac{True_{Positive} + True_{Negative}}{N_{Prediction}}
+$$
+
+Trong đó $N_{Prediction}$ là tổng số lượng dự đoán.
+
+Accuracy là metric phổ biến vì dễ diễn giải nhưng hạn chế của nó là đo lường trên *tất cả* các nhãn mà không quan tâm đến từng nhãn. Do đó không phù hợp khi kích thước các lớp dữ liệu chênh lệch nhau nhiều.
+
+### 2. Precision
+
+Precision tính toán tỉ lệ số lượng dự đoán đúng của Positive và tổng số lượng dự đoán là Positive:
+
+$$
+Precision = \frac{True_{Positive}}{True_{Positive} + False_{Positive}}
+$$
+
+Trong đó $False_{Positive}$ là số lượng mẫu không phải là Positive nhưng mô hình dự đoán là Positive.
+
+### 3. Recall
+
+Recall (sensitivity hoặc true positive rate) đo lường tỉ lệ giữa số lượng đoán đúng và tổng số lượng thực tế của mẫu đó:
+
+$$
+Recall = \frac{True_{Positive}}{True_{Positive} + False_{Negative}}
+$$
+
+- **Precision cao** → độ chính xác của các điểm dự đoán là cao.
+- **Recall cao** → True Positive Rate cao, tức tỉ lệ dự đoán sai positive là thấp.
+
+### 4. F1-Score
+
+F1-Score là trung bình điều hòa của Precision và Recall. Giá trị trong khoảng (0;1], càng cao càng tốt:
+
+$$
+F1\text{-}Score = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
+$$
+
+## Tổng kết
+
+Các metric cung cấp cái nhìn tổng quan về hiệu suất của mô hình. Lựa chọn metric phụ thuộc vào bản chất cụ thể của bài toán:
+
+- **Accuracy** chỉ phù hợp với các bài toán mà kích thước các lớp dữ liệu tương đối đều nhau.
+- Khi dữ liệu bị **imbalanced**, Precision và Recall thường được sử dụng thay thế.
+- **F1-Score** là lựa chọn tốt khi bạn cần cân bằng cả Precision và Recall.
+
+Cảm ơn bạn đã ghé đọc bài viết này!

@@ -1,0 +1,59 @@
+---
+title: "Quá trình hình thành mô hình học sâu"
+date: "2023-01-22"
+tags: ["deep-learning", "cnn", "computer-vision"]
+author: "Hung Nguyen"
+excerpt: "Lướt qua quá trình phát triển và hình thành các đặc điểm nổi bật của các mô hình CNN qua các thời kì."
+coverImage: "/images/covers/deep-learning-history.jpg"
+draft: false
+---
+
+## Overviews
+
+Convolutional Neural Network (CNN) hay còn được gọi với cái tên *"Mạng nơ-ron tích chập"*. Được hình thành từ năm 1998 với rất nhiều bước tiến đột phá. Hãy cùng tìm hiểu về quá trình phát triển cũng như lịch sử hình thành của các mạng nơ-ron tích chập nhé.
+
+**Các giai đoạn hình thành:**
+
+- Trước 1998: Mạng ML truyền thống: SVM, KNN, …
+- Sau 1998: **LeNet** ra đời — bước ngoặt trong nghiên cứu mô hình AI
+- 2009: **ImageNet** với hơn 1 triệu ảnh và 1000 nhãn
+- 2012+: **AlexNet** ứng dụng các conv trong CNN để trích xuất đặc trưng, thay thế các mạng truyền thống
+
+**Đặc trưng của CNN:**
+
+- Các lớp tích chập convolutional
+- Cấu trúc phân tầng
+- Kích thước layer giảm dần, độ sâu tăng dần
+- Sử dụng Fully Connected layer để phân loại
+
+## Các mạng CNN được hình thành
+
+### LeNet (1998)
+
+Cấu trúc đơn giản với 2 layers conv và 3 layers FC, tổng cộng có 60,000 parameters.
+
+### AlexNet (2012)
+
+Cải tiến của LeNet khi:
+
+- Tăng input size và độ sâu của mạng
+- Sử dụng kernel giảm dần
+- Sử dụng local normalization để chuẩn hóa
+
+## Các lớp trong mô hình CNN
+
+1. **Lớp Convolutional (Convolutional Layer):** Thực hiện các phép tích chập trên dữ liệu đầu vào để tìm các đặc trưng hình ảnh. Một bộ lọc (kernel) trượt qua dữ liệu để tạo ra các đặc trưng.
+
+2. **Lớp Pooling (Pooling Layer):** Giảm kích thước không gian đầu vào bằng cách lấy giá trị trung bình hoặc giá trị lớn nhất (Max Pooling, Average Pooling).
+
+3. **Lớp Activation (Activation Layer):** Áp dụng hàm kích hoạt phi tuyến tính (phổ biến nhất là ReLU).
+
+4. **Lớp Fully Connected (Fully Connected Layer):** Kết nối mỗi đầu ra từ các lớp trước đó với mỗi đầu vào. Thường dùng ở cuối mạng để phân loại.
+
+5. **Lớp Dropout:** Ngẫu nhiên loại bỏ một số nơ-ron trong quá trình huấn luyện để tránh overfitting.
+
+6. **Lớp Batch Normalization:** Chuẩn hóa các đầu ra của các lớp trước đó để giúp huấn luyện nhanh hơn và giảm overfitting.
+
+## Tổng kết
+
+Cảm ơn bạn đã ghé đọc bài viết này. Các kiến thức mình thu thập và viết lại theo ý hiểu cá nhân, nếu có thắc mắc hãy liên hệ với mình nhé!

@@ -1,0 +1,260 @@
+@import 'katex/dist/katex.min.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ────────────────────────────────────── */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --border: 240 6% 90%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --muted: 240 4% 12%;
+    --muted-foreground: 240 5% 65%;
+    --border: 240 4% 18%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+  }
+}
+
+/* ─── Base Styles ──────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-blue-500/20 text-foreground;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-neutral-300 dark:bg-neutral-700;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400 dark:bg-neutral-600;
+  }
+}
+
+/* ─── Highlight.js Themes ──────────────────────────────── */
+
+/* Light theme */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0;
+  background: transparent;
+  color: #24292e;
+}
+
+.hljs-comment,
+.hljs-punctuation {
+  color: #6a737d;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable.language_,
+.hljs-type,
+.hljs-template-variable {
+  color: #005cc5;
+}
+
+.hljs-string,
+.hljs-doctag,
+.hljs-regexp {
+  color: #032f62;
+}
+
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  color: #6f42c1;
+  font-weight: 600;
+}
+
+.hljs-keyword,
+.hljs-built_in,
+.hljs-tag,
+.hljs-deletion {
+  color: #d73a49;
+}
+
+.hljs-selector-tag,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #22863a;
+}
+
+.hljs-addition {
+  color: #22863a;
+  background-color: #f0fff4;
+}
+
+/* Dark theme */
+.dark .hljs {
+  color: #e6edf3;
+}
+
+.dark .hljs-comment,
+.dark .hljs-punctuation {
+  color: #8b949e;
+}
+
+.dark .hljs-attr,
+.dark .hljs-attribute,
+.dark .hljs-literal,
+.dark .hljs-meta,
+.dark .hljs-number,
+.dark .hljs-operator,
+.dark .hljs-variable.language_,
+.dark .hljs-type,
+.dark .hljs-template-variable {
+  color: #79c0ff;
+}
+
+.dark .hljs-string,
+.dark .hljs-doctag,
+.dark .hljs-regexp {
+  color: #a5d6ff;
+}
+
+.dark .hljs-title,
+.dark .hljs-title.class_,
+.dark .hljs-title.class_.inherited__,
+.dark .hljs-title.function_ {
+  color: #d2a8ff;
+  font-weight: 600;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-built_in,
+.dark .hljs-tag,
+.dark .hljs-deletion {
+  color: #ff7b72;
+}
+
+.dark .hljs-selector-tag,
+.dark .hljs-selector-id,
+.dark .hljs-selector-class {
+  color: #7ee787;
+}
+
+.dark .hljs-addition {
+  color: #7ee787;
+  background-color: rgba(63, 185, 80, 0.1);
+}
+
+/* ─── Anchor Links ─────────────────────────────────────── */
+.anchor {
+  @apply opacity-0 transition-opacity;
+  margin-right: 0.5rem;
+  color: hsl(var(--muted-foreground));
+}
+
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor {
+  @apply opacity-100;
+}
+
+/* ─── Prose Overrides ──────────────────────────────────── */
+.prose {
+  --tw-prose-pre-bg: transparent;
+}
+
+.prose pre {
+  @apply p-0 bg-transparent border-0 rounded-none;
+}
+
+.prose code:not(pre code) {
+  @apply px-1.5 py-0.5 rounded text-sm font-mono;
+  @apply bg-neutral-100 dark:bg-neutral-800;
+  @apply text-neutral-800 dark:text-neutral-200;
+}
+
+.prose code:not(pre code)::before,
+.prose code:not(pre code)::after {
+  content: '' !important;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-blue-500 not-italic;
+  @apply bg-blue-50 dark:bg-blue-950/30;
+  @apply rounded-r-lg;
+  @apply pl-6 pr-4 py-3;
+  @apply my-6;
+}
+
+.prose blockquote p {
+  @apply text-neutral-700 dark:text-neutral-300;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: '' !important;
+}
+
+.prose img {
+  @apply rounded-xl shadow-sm;
+}
+
+.prose hr {
+  @apply border-border;
+}
+
+.prose table {
+  @apply border-collapse w-full;
+}
+
+.prose thead tr {
+  @apply border-b-2 border-border;
+}
+
+.prose tbody tr {
+  @apply border-b border-border;
+}
+
+.prose td,
+.prose th {
+  @apply px-4 py-2 text-left;
+}
+
+.prose thead th {
+  @apply font-semibold text-foreground;
+}

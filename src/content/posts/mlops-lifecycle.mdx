@@ -1,0 +1,55 @@
+---
+title: "MLOps Lifecycle — Vòng đời của một dự án AI"
+date: "2023-01-22"
+tags: ["mlops", "machine-learning", "ai"]
+author: "Hung Nguyen"
+excerpt: "Chúng ta cần xây dựng cho dự án một vòng đời để kiểm soát được rủi ro khi dự án đang hoạt động."
+coverImage: "/images/covers/mlops-lifecycle.png"
+draft: false
+---
+
+## Overviews
+
+Việc triển khai ổn định trong thực tế tốn nhiều thời gian vì vậy việc nắm bắt được quá trình hoạt động của hệ thống là vô cùng quan trọng. Chúng ta cần xây dựng cho dự án một vòng đời để kiểm soát được rủi ro khi dự án đang hoạt động.
+
+![ML in Production](https://images.viblo.asia/892b2e0d-17d5-4ece-9503-b3999f5d0c13.png)
+
+**Configure**
+
+Ở bước này chúng ta xác định mục tiêu của dự án với bài toán học máy, khai thác dựa trên các yếu tố:
+
+- **Mục tiêu (target):** Ứng dụng ML để giải quyết vấn đề của dự án.
+- **Đánh giá rủi ro (cost of mistakes):** Không có mô hình nào có độ chính xác tuyệt đối 100%, vì vậy cần đánh giá sơ bộ về tính khả thi và khả năng dự đoán của mô hình.
+- **Dữ liệu có sẵn hay không (data availability):** Dữ liệu phong phú và đa dạng giúp cho mô hình hoạt động tốt hơn.
+- **Đánh giá số liệu (evaluation metrics):** Lựa chọn ngưỡng của các số liệu phù hợp với dự án.
+
+**Data collection**
+
+Thu thập dữ liệu cần thiết từ các nguồn hoặc tự xây dựng bộ dữ liệu cho dự án dựa vào các yêu cầu cụ thể.
+
+**Data verification**
+
+Lọc bỏ các thành phần dữ liệu gây nhiễu, làm sạch dữ liệu, loại bỏ các dữ liệu trùng lặp, gắn nhãn một cách chính xác. Sau đó chuyển đổi dữ liệu sao cho phù hợp với mô hình ML đang hướng tới.
+
+**ML model coding**
+
+Sau khi có dữ liệu hoàn chỉnh, tiến hành huấn luyện, chạy thử nghiệm, so sánh hiệu suất của các mô hình, điều chỉnh siêu tham số và lựa chọn mô hình tốt nhất.
+
+**Serving infrastructure**
+
+Cơ sở hạ tầng ML bao gồm các tài nguyên, quy trình và công cụ cần thiết để phát triển, vận hành và đào tạo các mô hình ML.
+
+**Monitoring**
+
+Đánh giá mô hình với mục tiêu ban đầu, theo dõi tình trạng mô hình, lỗi, độ trễ, dự đoán. Tiến hành điều chỉnh với phản hồi của khách hàng.
+
+## Các bước triển khai trong ML Production
+
+1. **Scoping** — Define project và các việc cần làm.
+2. **Data** — Define data và thiết lập baseline. Label và organize data.
+3. **Modeling** — Chọn mô hình và train. Phân tích các lỗi gặp phải.
+4. **Deployment** — Deploy trong sản phẩm. Theo dõi và maintain hệ thống.
+
+## Tổng kết
+
+Trong bài viết này chúng ta đã nắm bắt được khá tổng quát lý thuyết của bài toán MLOps trong một dự án, về các bước thực hiện, tiến hành hệ thống. Các bài viết tiếp theo sẽ đi sâu hơn và trực quan hơn nhé!

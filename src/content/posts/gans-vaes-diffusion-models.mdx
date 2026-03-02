@@ -1,0 +1,132 @@
+---
+title: "GANs, VAEs, Diffusion Models"
+date: "2023-01-22"
+tags: ["generative-models", "gan", "vae", "diffusion-models", "deep-learning"]
+author: "Hung Nguyen"
+excerpt: "GAN, VAE và Diffusion Models là ba hướng tiếp cận quan trọng trong generative modeling. GAN phù hợp khi cần tốc độ và chất lượng cao, VAE là lựa chọn tốt cho nén dữ liệu, Diffusion Models mang lại chất lượng cao nhất."
+coverImage: "/images/covers/gans-vaes-diffusion-models.webp"
+draft: false
+---
+
+# Generative Models: GAN, VAE và Diffusion Models
+
+## 1. Giới thiệu
+
+Generative Models (Mô hình sinh) là một trong những lĩnh vực quan trọng nhất trong Machine Learning, cho phép máy tính học cách tạo ra dữ liệu mới từ các mẫu đã có. Trong bài viết này, chúng ta sẽ tìm hiểu ba mô hình sinh phổ biến: **Generative Adversarial Networks (GANs)**, **Variational Autoencoders (VAEs)** và **Diffusion Models**.
+
+---
+
+## 2. Generative Adversarial Networks (GANs)
+
+### 2.1. Tổng quan về GAN
+
+GAN được giới thiệu bởi Ian Goodfellow vào năm 2014, hoạt động dựa trên cơ chế **trò chơi giữa hai mạng nơ-ron**, gồm:
+
+- **Generator (G):** Tạo ra dữ liệu giả.
+- **Discriminator (D):** Phân biệt dữ liệu thật và dữ liệu giả do Generator tạo ra.
+
+Quá trình huấn luyện GAN có thể xem như một trò chơi hai người chơi (min-max game), trong đó Generator cố gắng đánh lừa Discriminator, còn Discriminator cố gắng phát hiện dữ liệu giả.
+
+### 2.2. Hàm mất mát
+
+Hàm mục tiêu của GAN có thể được biểu diễn như sau:
+
+$$
+\min_G \max_D V(D, G) = \mathbb{E}_{x \sim p_{data}(x)}[\log D(x)] + \mathbb{E}_{z \sim p_z(z)}[\log (1 - D(G(z)))]
+$$
+
+- Generator cố gắng giảm xác suất **Discriminator** phát hiện dữ liệu giả.
+- **Discriminator** cố gắng phân biệt chính xác giữa dữ liệu thật và dữ liệu giả.
+
+### 2.3. Các biến thể của GAN
+
+Một số biến thể nổi bật của GAN:
+
+- **DCGAN (Deep Convolutional GAN)**: Sử dụng CNN thay vì MLP.
+- **WGAN (Wasserstein GAN)**: Cải thiện tính ổn định bằng cách thay thế hàm mất mát gốc bằng khoảng cách Wasserstein.
+- **StyleGAN**: Dùng trong tạo ảnh chất lượng cao với điều khiển phong cách tốt.
+
+### 2.4. Ứng dụng của GAN
+
+- Tạo ảnh chân dung giả (Face Generation - e.g. ThisPersonDoesNotExist).
+- Chuyển đổi phong cách ảnh (Style Transfer, Pix2Pix, CycleGAN).
+- Tạo ảnh chất lượng cao từ phác thảo (Sketch-to-Image).
+- Ứng dụng trong sinh dữ liệu y tế, nghệ thuật và thời trang.
+
+---
+
+## 3. Variational Autoencoders (VAEs)
+
+### 3.1. Tổng quan về VAE
+
+VAE là một dạng Autoencoder đặc biệt, giúp học một **biểu diễn xác suất** của dữ liệu và tạo dữ liệu mới từ không gian tiềm ẩn (*latent space*).
+
+### 3.2. Kiến trúc của VAE
+
+VAE gồm hai thành phần chính:
+
+- **Encoder:** Mã hóa đầu vào thành một phân phối tiềm ẩn $q(z|x)$.
+- **Decoder:** Dự đoán lại dữ liệu từ không gian tiềm ẩn $p(x|z)$.
+
+Thay vì ánh xạ một điểm cụ thể vào không gian tiềm ẩn, VAE ánh xạ vào một phân phối Gaussian $\mathcal{N}(\mu, \sigma^2)$.
+
+### 3.3. Hàm mất mát của VAE
+
+Hàm mất mát của VAE gồm hai phần:
+
+$$
+\mathcal{L} = \mathbb{E}_{q(z|x)} [\log p(x|z)] - D_{KL}(q(z|x) \| p(z))
+$$
+
+- **Phần đầu**: Sai số tái tạo (reconstruction loss), giúp dữ liệu tái tạo giống dữ liệu gốc.
+- **Phần hai**: Độ lệch KL (Kullback-Leibler divergence), giúp không gian tiềm ẩn gần với phân phối Gaussian chuẩn.
+
+### 3.4. Ứng dụng của VAE
+
+- Tạo ảnh (MNIST, CelebA, Anime Faces).
+- Nén dữ liệu có tổ chức hơn so với GAN.
+- Ứng dụng trong sinh nhạc, văn bản và thiết kế thuốc.
+
+---
+
+## 4. Diffusion Models
+
+### 4.1. Tổng quan về Diffusion Models
+
+Diffusion Models là một phương pháp sinh dữ liệu dựa trên **quá trình khuếch tán** (diffusion process), trong đó dữ liệu dần dần bị nhiễu hóa và sau đó được phục hồi lại.
+
+### 4.2. Cách hoạt động
+
+Quá trình khuếch tán gồm hai bước chính:
+
+1. **Forward Process:** Thêm nhiễu Gaussian vào dữ liệu theo từng bước nhỏ.
+2. **Reverse Process:** Học cách khử nhiễu để tái tạo dữ liệu ban đầu.
+
+### 4.3. Ứng dụng của Diffusion Models
+
+- Tạo ảnh có độ phân giải cao (DALL-E 2, Imagen, Stable Diffusion).
+- Sinh video, nhạc, văn bản.
+- Ứng dụng trong y sinh, thiết kế thuốc và vật liệu.
+
+---
+
+## 5. So sánh GAN, VAE và Diffusion Models
+
+| Tiêu chí | GAN | VAE | Diffusion Models |
+| --- | --- | --- | --- |
+| **Tốc độ huấn luyện** | Nhanh nhưng khó hội tụ | Dễ hội tụ nhưng cần điều chỉnh | Rất chậm |
+| **Chất lượng đầu ra** | Cao nhưng dễ bị mode collapse | Ổn định nhưng chất lượng chưa cao | Rất cao |
+| **Tính đa dạng** | Có thể bị mode collapse | Tốt hơn GAN | Rất tốt |
+| **Ứng dụng phổ biến** | Ảnh chân dung, video deepfake | Nén dữ liệu, sinh dữ liệu có cấu trúc | Ảnh nghệ thuật, y sinh |
+
+---
+
+## 6. Kết luận
+
+GAN, VAE và Diffusion Models là ba hướng tiếp cận quan trọng trong generative modeling.
+
+- **GAN** phù hợp khi cần tốc độ và chất lượng cao, nhưng khó huấn luyện.
+- **VAE** là lựa chọn tốt cho nén dữ liệu và tái tạo dữ liệu có cấu trúc.
+- **Diffusion Models** mang lại chất lượng cao nhất, nhưng tốn thời gian huấn luyện.
+
+Tùy vào ứng dụng cụ thể, chúng ta có thể chọn mô hình phù hợp để tối ưu hóa kết quả.

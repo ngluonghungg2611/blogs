@@ -1,0 +1,245 @@
+---
+title: "[LangGraph Series] Part 1: Muốn Hero? Bạn phải bắt đầu từ Zero"
+date: "2025-05-05"
+tags: ["langgraph", "llm", "ai-agents", "chatbot"]
+author: "Hung Nguyen"
+excerpt: "Chúng ta sẽ bắt đầu với việc xây dựng một chú chatbot đơn giản sử dụng LangGraph nhé, chatbot này sẽ có chức năng trả lời trực tiếp câu hỏi của user."
+coverImage: "/images/covers/langgraph-series-part-1.png"
+draft: false
+---
+
+# Bước 1: Xây dựng một chatbot đơn giản
+
+Chúng ta sẽ bắt đầu với việc xây dựng một chú chatbot đơn giản sử dụng LangGraph nhé, chatbot này sẽ có chức năng trả lời trực tiếp câu hỏi của user.
+
+Các bước thực hiện:
+
+- Bước đầu tiên chúng ta sẽ thực hiện khởi tạo ra StateGraph. StateGraph sẽ định nghĩa cấu trúc của chatbot. Trong các state này sẽ chưa các nodes và các edges, nơi mà sẽ có nhiệm vụ giao tiếp với nhau tương ứng với các chức năng của con bot
+
+```python
+from typing import Annotated
+
+from typing_extensions import TypedDict
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+
+class State(TypedDict):
+    # Messages have the type "list". The `add_messages` function
+    # in the annotation defines how this state key should be updated
+    # (in this case, it appends messages to the list, rather than overwriting them)
+    messages: Annotated[list, add_messages]
+
+graph_builder = StateGraph(State)
+```
+
+Graph này sẽ có chức năng như sau:
+
+- Mỗi node sẽ nhận input là state hiện tại và output sẽ là updated state
+- Các message sẽ được update vào list message
+
+**Ý tưởng**
+
+- Khi khởi tạo một graph, bước đầu tiên cần phải khởi tạo State. State bao gồm schema của graph và các hàm chức năng xử lý cập nhật state. Mỗi note sẽ đại diện cho mỗi công việc, chức năng tương ứng
+
+Bạn có thể thấy phía trên tôi đang để kiểu dữ liệu của message là  Annotated[list, add_messages], tại sao lại vậy. Vì sau khi đi qua các node, state sẽ được cật nhật, nhưng thay vì ghi đè lên nó thì tôi tiến hành append (hay nói cách khác là thêm phần tử) vào biến messages để lưu lại các kết quả tương ứng.
+
+Tiếp theo, chúng ta hãy cùng nhau khởi tạo một node và action của node đó nhé:
+
+```python
+from langchain_anthropic import ChatAnthropic
+
+llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
+
+def chatbot(state: State):
+    bot_messages = llm.invoke(state["messages"])
+    return {"messages": bot_messages}
+
+# The first argument is the unique node name
+# The second argument is the function or object that will be called whenever
+# the node is used.
+graph_builder.add_node("chatbot", chatbot)
+```
+
+Chúng ta sẽ sử dụng thư viên Antropic để có thể khởi tạo 1 llm claude-3.5-sonnet.
+
+Như tôi có đề cập phía trên với action tool **`chatbot`**, chúng ta sẽ tiến hành lấy giá trị của trường **messages** của state hiện tại truyền vào llm. Sau khi thu được kết quả tool này trả về kết quả là dict `{"messages": bot_messages}` , điều này mô ta vệ sau khi đi qua node `chatbot` thì giá trị của trường **messages** đã được cât nhập (bằng cách thêm vào cuối - tôi đã giải thích phía trên rồi đó)
+
+Chắc hản bạn đã hiểu được logic của state sẽ đi như nào trong graph rồi chứ, nhưng chưa xong đâu, một graph hoàn chỉnh là sẽ phải gồm có các nodes và các  ta còn có các `edges`. Hãy cùng xây dựng các `edges` tương ứng trong gprah nhé.
+
+```python
+graph_builder.add_edge(START, "chatbot")
+
+graph_builder.add_edge("chatbot", END)
+```
+
+Với graph đơn giản của chúng ta, thì chỉ cần khởi tạo 1 node `START` và node `END` , hàm `add_edge` nhận giá trị là tên của node bắt đầu, và tên của node đích mà muốn nối tới
+
+Vậy là bạn đã dựng đầy đủ nodes và edges của một graph rồi. Giờ hãy `compile` graph nhé, điều này sẽ tạo ra một CompiledGraph để chúng ta tiến hành `invoke`
+
+```python
+graph = graph_builder.compile()
+```
+
+Bạn có thể biểu diễn graph của mình để xem các node được nối với nhau như nào nhé:
+
+```python
+from IPython.display import Image, display
+
+try:
+    display(Image(graph.get_graph().draw_mermaid_png()))
+except Exception:
+    # This requires some extra dependencies and is optional
+    pass
+```
+
+![image.png](%5BLangGraph%20Series%5D%20Part%201%20Mu%E1%BB%91n%20%E2%80%9CHero%E2%80%9D%20B%E1%BA%A1n%20ph%E1%BA%A3i%20b%E1%BA%AFt/image.png)
+
+Vậy là bạn đã xây dựng được 1 graph và có thể chạy được rồi đó, vậy còn code chạy như nào thì hãy cùng tham khảo dưới đây nhé
+
+```python
+def stream_graph_updates(user_input: str):
+    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
+        for value in event.values():
+            print("Assistant:", value["messages"][-1].content)
+
+while True:
+    try:
+        user_input = input("User: ")
+        if user_input.lower() in ["quit", "exit", "q"]:
+            print("Goodbye!")
+            break
+
+        stream_graph_updates(user_input)
+    except:
+        # fallback if input() is not available
+        user_input = "What do you know about LangGraph?"
+        print("User: " + user_input)
+        stream_graph_updates(user_input)
+        break
+```
+
+Ngon! Vậy là bạn đã xây dựng được một chú chatbot được thiết kế bằng graph.
+
+Cái hay của cách xây dựng chatbot bằng graph này là bạn dễ dàng cung cấp cho con bot các tool call vô cùng hữu ích. Hãy cùng đi đến phần tiếp theo để nắm được các xây dựng các tool trong một graph nhé
+
+# Phần 2: Enhancing Chatbot with Tools
+
+Khá đơn giản, hãy tưởng tượng, bạn đang xây dựng một chatbot. Khi người dùng đưa câu hỏi vào, bạn cần phân biệt được câu hỏi đó có liên quan đến dữ liệu của bạn không, nếu có thì sẽ đi vào hệ thông RAG của bạn, còn không thì sẽ tự để con bot trả lời bằng knownledge của nó. Với những người mới tiếp cận với RAG, thì bạn có thể hiểu một cách nguyên thủy thì đây là bước function calling. Còn khi các bạn bước sang việc implement bài toán RAG của các bạn bằng LangGraph thì đây gọi là bước Adapter (Router đến các tool-calling hãy các nodes)
+
+Vậy chúng ta cần làm gì? Các bạn cứ thực hiện như các bước tôi có giới thiệu ở trên: khởi tạo, các nodes, khởi tạo các edges, compile graph.
+
+### Hãy cùng bắt đầu bằng việc dựng state:
+
+```python
+from typing_extensions import TypedDict
+
+class SearchState(TypedDict):
+    inputs: str
+    route: Literal["RAG", "NON_RAG"]
+    messages: str
+```
+
+State của tôi khởi tạo gồm 2 `attribute` là inputs và `route`, `inputs` chính là câu hỏi của người dùng và `route` là branch mà chúng ta sẽ rẽ tới, hay là chính là node mà bạn sẽ đi tới sau khi đi qua bước adapter. Tại sao tôi lại phải khởi tạo ngay từ đầu, vì các bạn có thể biết thì state sẽ đi qua các node và sẽ cật nhập qua từng node đó, nên tôi sẽ khởi tạo route ở đây.
+
+### Khởi tạo tool call
+
+```python
+def adapter(state: SearchState) -> dict:
+    route = llm_model.process(state['inputs'])
+    return state
+
+def non_RAG(state: SearchState) -> dict:
+    # Logic non RAG
+    messages = non_rag_pipeline.process(state['inputs'])
+    return {"messages": messages}
+
+def rag(state: SearchState) -> dict:
+    # Logic RAG
+    messages = rag_pipeline.process(state['inputs'])
+    return dict
+```
+
+Ở phần `adapter`, tôi cho gọi 1 model llm để classify xem câu hỏi có thực sự liên qua tới dữ liệu đã được train cho con bot hay không (khá dễ hiểu nhỉ)
+
+Ở phần `non_RAG`, nơi mà sẽ thiết lập các logic nếu câu hỏi không liên quan đến dữ liệu của con bot đã được học, có thể sẽ là websearch, hay raise lên là k trả lời được, hay như nào đó vân vân và mây mây
+
+Ở phần `rag` , welcome to RAG pipeline, nơi sẽ chứa phần code chính của hệ thống RAG của bạn
+
+### Triển khai graph
+
+Vậy là chúng ta đã có các tool, giờ ta sẽ cần khởi tạo các nodes và các edges.
+
+```python
+query_graph = StateGraph(SearchState)
+
+query_graph.add_node("adapter", adapter)
+query_graph.add_node("non_rag", non_RAG)
+query_graph.add_node("query_rag", rag)
+
+query_graph.add_edge(START, 'adapter')
+query_graph.add_conditional_edges("adapter",  route_after_func_call, {
+    "answer_with_rag" : "query_rag",
+    "answer_without_rag" : "non_rag"
+})
+query_graph.add_edge("query_rag", END)
+query_graph.add_edge("non_rag", END)
+
+query_graph_workflow=query_graph.compile()
+Image(query_graph_workflow.get_graph(xray=2).draw_mermaid_png())
+```
+
+![image.png](%5BLangGraph%20Series%5D%20Part%201%20Mu%E1%BB%91n%20%E2%80%9CHero%E2%80%9D%20B%E1%BA%A1n%20ph%E1%BA%A3i%20b%E1%BA%AFt/image%201.png)
+
+Sau khi compile graph, ta thu được biểu độ graph có dạng như trên. Bên cạnh việc `add_edge` thường, thì ta sẽ sử dụng `add_conditional_edges` để biểu diễn node **adapter** sẽ routing tới các nodes **non_rag** và **rag**. Trong các trường hợp node được nối, state sẽ được đi qua 1 trong các cạnh được khởi tạo ở phần conditional edges này
+
+Giờ hãy thử test xem state được cật nhập như thế nào nhé
+
+```python
+input_query = "tối bị mất chìa khóa tủ của công cty, tôi nên làm gì"
+config = {"configurable": {"thread_id": "1"}}
+async for data in query_graph_workflow.astream({"inputs": input_query}, stream_mode=["values"]):
+    print(data) #state on each node
+    print("----")
+```
+
+Kết quả thu được sẽ có dạng
+
+```python
+('values', {'inputs': 'tối bị mất chìa khóa tủ của công cty, tôi nên làm gì'})
+----
+('values', {'inputs': 'tối bị mất chìa khóa tủ của công cty, tôi nên làm gì', 'route': 'RAG'})
+----
+('values', {'inputs': 'tối bị mất chìa khóa tủ của công cty, tôi nên làm gì', 'route': 'RAG'})
+----
+```
+
+Hiện tại 3 giá trị được in ra tượng ứng với state tại 3 node lần lượt của graph: `START`, `adapter`, `non_RAG/query_rag`
+
+# Tổng kết
+
+Trong bài viết này, chúng ta đã tìm hiểu về cách sử dụng **LangGraph** để xây dựng chatbot theo mô hình đồ thị (Graph-based). LangGraph giúp quản lý luồng hội thoại một cách trực quan và linh hoạt, cho phép cập nhật trạng thái động và tối ưu hóa quá trình xử lý truy vấn của chatbot.
+
+Chúng ta đã đi qua các bước chính sau:
+
+- **Tạo Graph**: Xây dựng cấu trúc `StateGraph` với các node để xử lý từng phần của luồng hội thoại.
+- **Xử lý truy vấn với Adapter**: Sử dụng LLM để phân loại đầu vào và định tuyến truy vấn.
+- **Cập nhật trạng thái động**: Theo dõi tin nhắn và duy trì trạng thái hội thoại theo thời gian thực.
+- **Streaming dữ liệu**: Cung cấp phản hồi theo thời gian thực bằng cách truyền dữ liệu liên tục qua WebSocket hoặc API streaming.
+
+So với cách tiếp cận truyền thống, LangGraph giúp tối ưu hóa hiệu suất, giảm sự phụ thuộc vào cấu trúc hội thoại cứng nhắc và hỗ trợ mở rộng quy mô linh hoạt. Đây là một công cụ mạnh mẽ để phát triển chatbot thông minh, có khả năng thích ứng với nhiều ngữ cảnh khác nhau.
+
+### Hướng phát triển tiếp theo
+
+- **Tích hợp Vector Database**: Kết hợp LangGraph với OpenSearch hoặc FAISS để tìm kiếm ngữ nghĩa tốt hơn.
+- **Tối ưu Graph phức tạp**: Xây dựng Graph với nhiều nhánh phức tạp hơn, xử lý hội thoại đa bước.
+- **Triển khai WebSocket API**: Cải thiện trải nghiệm người dùng bằng phản hồi theo thời gian thực.
+
+LangGraph là một hướng đi tiềm năng trong việc phát triển chatbot, giúp chatbot trở nên thông minh và có khả năng xử lý hội thoại tự nhiên hơn.
+
+## Tài liệu tham khảo
+
+- LangGraph Documentation: [https://github.com/langchain-ai/langgraph](https://github.com/langchain-ai/langgraph)
+- LangChain Documentation: https://python.langchain.com
+- OpenAI API: [https://platform.openai.com](https://platform.openai.com/)
+- Neo4j Graph Database: [https://neo4j.com](https://neo4j.com/)

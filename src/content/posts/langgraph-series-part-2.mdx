@@ -1,0 +1,267 @@
+---
+title: "[LangGraph Series] Part 2: Human-in-the-loop"
+date: "2025-05-06"
+tags: ["langgraph", "llm", "ai-agents", "human-in-the-loop"]
+author: "Hung Nguyen"
+excerpt: "Bối cảnh Human-in-the-loop (HITL) trong LangGraph - khi chúng ta cần sự tích hợp của con người vào quá trình xử lý của mô hình AI để kiểm soát, hiệu chỉnh và xác nhận kết quả."
+coverImage: "/images/covers/langgraph-series-part-2.png"
+draft: false
+---
+
+# Introduction
+
+Bối cảnh Human-in-the-loop (HITL) trong LangGraph thật ra khá là đơn giản, chính cái tên dường như đã giúp bạn hình dung phần nào về định nghĩa của nó. Khi chúng ta cần sự tích hợp của con người vào quá trình xử lý của mô hình AI, hay nói cách khác là ta đang cố gắng kiểm soát chúng, hiệu chỉnh và xác nhận kết quả. Điều này khá quan trọng trong các hệ thống sử dụng LangGraph, đặc biệt khi bạn sử dụng retrieval-augmented generation (RAG)
+
+Các case chính được sử dụng trong HITL:
+
+- Reviewing tool calls: Human sẽ tiến hành review, chỉnh sửa, hoặc là cho phép các tool calls bằng LLM trước khi được execute
+- Validating LLM outputs: Human tiến hành review, chỉnh sửa, hoặc cho phép các nội dung có thể được generated dựa vào LLM
+- Providing context:  Giúp cho LLM có thêm đầy đủ input từ human cho việc bổ sung thông tin hoặc conversation trong đoạn hội thoại
+
+Vậy việc Human "xâm nhập" vào loop như thế nào, hãy cùng đi tới phần dưới đây để làm rõ nhé
+
+## Interrupt
+
+Hàm `interrupt` trong LangGraph được áp dụng trong workflow HITL bằng cách ngắng gaph ở 1 node nhất định, đây là nơi mà human sẽ "xâm nhập" vào graph, sau đó thì workflow hoạt động bình thường khi đi qua phần này. `interrupt` function này sẽ giúp thực hiện tác vụ như xác nhận, chỉnh sửa, và thu thập các input bổ sung và được sử dụng trong conjuction với `Command` để các node được hoạt động chuyển tiếp trong graph
+
+```python
+from langgraph.types import interrupt
+
+def human_node(state: State):
+    value = interrupt(
+        # Any JSON serializable value to surface to the human.
+        # For example, a question or a piece of text or a set of keys in the state
+       {
+          "text_to_revise": state["some_text"]
+       }
+    )
+    # Update the state with the human's input or route the graph based on the input.
+    return {
+        "some_text": value
+    }
+
+graph = graph_builder.compile(
+    checkpointer=checkpointer # Required for `interrupt` to work
+)
+
+# Run the graph until the interrupt
+thread_config = {"configurable": {"thread_id": "some_id"}}
+graph.invoke(some_input, config=thread_config)
+
+# Resume the graph with the human's input
+graph.invoke(Command(resume=value_from_human), config=thread_config)
+```
+
+*Note:*
+
+- Khi workflow chạy đến `human_node()`, nó **tạm dừng** tại `interrupt`, yêu cầu con người cung cấp dữ liệu.
+- Sau khi con người nhập phản hồi, hệ thống **tiếp tục** chạy workflow từ điểm bị gián đoạn.
+
+Để sử dụng `interrupt` trong đồ thị của bạn, bạn cần:
+
+- [**Chỉ định một checkpointer**](https://langchain-ai.github.io/langgraph/concepts/persistence/#checkpoints) để lưu trạng thái của đồ thị sau mỗi bước.
+- **Gọi `interrupt()`** ở vị trí thích hợp. Xem phần [Design Patterns](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/#design-patterns) để tham khảo ví dụ.
+- **Chạy đồ thị** với [**thread ID**](https://langchain-ai.github.io/langgraph/concepts/persistence/#threads) cho đến khi gặp `interrupt`.
+- **Tiếp tục thực thi** bằng cách sử dụng `invoke` / `ainvoke` / `stream` / `astream` (tham khảo [**Primitive `Command`**](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/#the-command-primitive)).
+
+## Design Patterns
+
+Thông thường, chúng ta sẽ có e options để lựa chọn trong quá trình HITL workflow:
+
+- **Approve or Reject**: Việc dừng và kiểm soát đồ thì trước khi bước vào một node action quan trọng cũng là một điều đáng chú ý trong cách xây dựng graph của bạn, giống như trong tác vụ call đến API, chúng ta cần cẩn trọng, review, kiểm soát kĩ chất lượng sau đó mới tiến hành action. Mô hình này thường được dùng để routing tới các node tương ứng với input
+- **Edit Graph State:** Dừng graph để review và chỉnh sửa trạng thái hiện tại của graph (hay là edit state on workflow). Cách này khá hay dùng và hữu ích để corrective mistakes hoặc update trạng thái với các thông tin bổ sung. Mô hình này thường được dùng để update state dựa vào input tương ứng
+- **Get Input:** Định nghĩa rõ ràng các input trong state để có thể kiểm soát được các biến qua từng state tương ứng với các nodes. Mô hình này thường được dùng để sử dụng trong các tác vụ liên quan đến việc cần phải thu thập thêm các thông tin bổ sung hoặc context bổ sung nhằm tối ưu trong việc **agent's decision-making process** hoặc **multi-turn conversations**.
+
+### Approve and Reject
+
+![image.png](%5BLangGraph%20Series%5D%20Part%202%20Human-in-the-loop/image.png)
+
+```python
+from typing import Literal
+from langgraph.types import interrupt, Command
+
+def human_approval(state: State) -> Command[Literal["some_node", "another_node"]]:
+    is_approved = interrupt(
+        {
+            "question": "Is this correct?",
+            # Surface the output that should be
+            # reviewed and approved by the human.
+            "llm_output": state["llm_output"]
+        }
+    )
+
+    if is_approved:
+        return Command(goto="some_node")
+    else:
+        return Command(goto="another_node")
+
+# Add the node to the graph in an appropriate location
+# and connect it to the relevant nodes.
+graph_builder.add_node("human_approval", human_approval)
+graph = graph_builder.compile(checkpointer=checkpointer)
+
+# After running the graph and hitting the interrupt, the graph will pause.
+# Resume it with either an approval or rejection.
+thread_config = {"configurable": {"thread_id": "some_id"}}
+graph.invoke(Command(resume=True), config=thread_config)
+```
+
+### Review and Edit State
+
+![image.png](%5BLangGraph%20Series%5D%20Part%202%20Human-in-the-loop/image%201.png)
+
+*Xem lại và chỉnh sửa trạng thái của biểu đồ. Điều này hữu ích để sửa lỗi hoặc cập nhật trạng thái bằng thông tin bổ sung.*
+
+```python
+from langgraph.types import interrupt
+
+def human_editing(state: State):
+    ...
+    result = interrupt(
+        # Interrupt information to surface to the client.
+        # Can be any JSON serializable value.
+        {
+            "task": "Review the output from the LLM and make any necessary edits.",
+            "llm_generated_summary": state["llm_generated_summary"]
+        }
+    )
+
+    # Update the state with the edited text
+    return {
+        "llm_generated_summary": result["edited_text"]
+    }
+
+# Add the node to the graph in an appropriate location
+# and connect it to the relevant nodes.
+graph_builder.add_node("human_editing", human_editing)
+graph = graph_builder.compile(checkpointer=checkpointer)
+
+...
+
+# After running the graph and hitting the interrupt, the graph will pause.
+# Resume it with the edited text.
+thread_config = {"configurable": {"thread_id": "some_id"}}
+graph.invoke(
+    Command(resume={"edited_text": "The edited text"}),
+    config=thread_config
+)
+```
+
+### Review Tool Calls
+
+![image.png](%5BLangGraph%20Series%5D%20Part%202%20Human-in-the-loop/image%202.png)
+
+Tiến hành chỉnh sửa và xem xét lại đầu ra của LLM trước khi execute
+
+```python
+def human_review_node(state) -> Command[Literal["call_llm", "run_tool"]]:
+    # This is the value we'll be providing via Command(resume=<human_review>)
+    human_review = interrupt(
+        {
+            "question": "Is this correct?",
+            # Surface tool calls for review
+            "tool_call": tool_call
+        }
+    )
+
+    review_action, review_data = human_review
+
+    # Approve the tool call and continue
+    if review_action == "continue":
+        return Command(goto="run_tool")
+
+    # Modify the tool call manually and then continue
+    elif review_action == "update":
+        ...
+        updated_msg = get_updated_msg(review_data)
+        # Remember that to modify an existing message you will need
+        # to pass the message with a matching ID.
+        return Command(goto="run_tool", update={"messages": [updated_message]})
+
+    # Give natural language feedback, and then pass that back to the agent
+    elif review_action == "feedback":
+        ...
+        feedback_msg = get_feedback_msg(review_data)
+        return Command(goto="call_llm", update={"messages": [feedback_msg]})
+```
+
+### Multi-turn conversation
+
+![image.png](%5BLangGraph%20Series%5D%20Part%202%20Human-in-the-loop/image%203.png)
+
+Một cuộc hội thoại nhiều lượt (**multi-turn conversation**) trong **LangGraph** cho phép một tác nhân (**agent**) tương tác với con người nhiều lần, giúp thu thập thêm thông tin một cách linh hoạt.
+
+Trong một hệ thống gồm nhiều agent, có thể cần con người cung cấp thông tin ở nhiều giai đoạn khác nhau. Điều này được triển khai bằng cách:
+
+1. **Tạm dừng (`interrupt`)** - Để chờ phản hồi từ con người trước khi tiếp tục.
+2. **Cập nhật trạng thái** - Để lưu trữ thông tin giữa các lượt hội thoại.
+3. **Điều hướng theo điều kiện** - Chuyển hướng workflow dựa trên phản hồi từ con người.
+
+```python
+from langgraph.types import interrupt
+
+def human_input(state: State):
+    human_message = interrupt("human_input")
+    return {
+        "messages": [
+            {
+                "role": "human",
+                "content": human_message
+            }
+        ]
+    }
+
+def agent(state: State):
+    # Agent logic
+    ...
+
+graph_builder.add_node("human_input", human_input)
+graph_builder.add_edge("human_input", "agent")
+graph = graph_builder.compile(checkpointer=checkpointer)
+
+# After running the graph and hitting the interrupt, the graph will pause.
+# Resume it with the human's input.
+graph.invoke(
+    Command(resume="hello!"),
+    config=thread_config
+)
+```
+
+# Tổng kết
+
+Human-in-the-loop (**HITL**) trong **LangGraph** là một cách tiếp cận quan trọng khi tích hợp con người vào quy trình xử lý của mô hình **AI**. Điều này giúp **kiểm soát chất lượng đầu ra**, **hiệu chỉnh thông tin** và **cung cấp thêm ngữ cảnh phù hợp**.
+
+## Các phương pháp triển khai HITL
+
+**Interrupt & Resume**
+
+Tạm dừng workflow tại một node nhất định để con người can thiệp.
+
+**Approve or Reject**
+
+Kiểm tra và xác nhận trước khi thực hiện các hành động quan trọng.
+
+**Edit Graph State**
+
+Cho phép chỉnh sửa trạng thái của workflow để sửa lỗi hoặc cập nhật thông tin.
+
+**Review Tool Calls**
+
+Kiểm tra và xác nhận các lời gọi tool của **LLM** trước khi thực thi.
+
+**Multi-turn Conversation**
+
+Tương tác linh hoạt giữa con người và hệ thống qua nhiều vòng hội thoại.
+
+Bằng cách áp dụng các pattern trên, chúng ta có thể:
+
+- Tối ưu hóa độ chính xác của AI
+- Giảm thiểu lỗi trong quá trình xử lý
+- Nâng cao trải nghiệm người dùng
+
+# Tài liệu tham khảo
+
+- [LangGraph - Human-in-the-loop](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/)
+- [LangGraph - Checkpointing](https://langchain-ai.github.io/langgraph/concepts/persistence/#checkpoints)
+- [LangGraph - Threads](https://langchain-ai.github.io/langgraph/concepts/persistence/#threads)
+- LangChain - Retrieval-Augmented Generation (RAG)

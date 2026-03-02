@@ -1,0 +1,206 @@
+---
+title: "From ML/DL to LLM Series - Part 2: Large Language Model"
+date: "2023-01-22"
+tags: ["machine-learning", "deep-learning", "llm", "transformers"]
+author: "Hung Nguyen"
+excerpt: "Kiến trúc LLM hiện đại: Decoder-only Transformer, Tokenization, KV Cache, PPO, DPO, LoRA và QLoRA."
+draft: false
+---
+
+# I. LLM Architecture
+
+Để hiểu về các mô hình ngôn ngữ lớn (LLM) hiện đại như GPT-4, Llama 3 hay Gemini, chúng ta cần bóc tách những "viên gạch" quan trọng nhất tạo nên sức mạnh của chúng. LLM không chỉ là một mạng neural khổng lồ; nó là một hệ thống được tối ưu hóa cực độ để xử lý ngôn ngữ.
+
+## 1. Decoder-only Transformer (GPT-style): "Cỗ máy tiên tri"
+
+Khác với kiến trúc Transformer nguyên bản (có cả Encoder và Decoder), hầu hết các LLM hiện nay đều sử dụng cấu trúc **Decoder-only**.
+
+- **Cơ chế Autoregressive (Tự hồi quy):** Mô hình dự đoán từ tiếp theo dựa trên tất cả các từ đã xuất hiện trước đó. Mỗi từ được sinh ra lại trở thành một phần của đầu vào cho bước tiếp theo.
+- **Causal Masking (Mặt nạ nhân quả):** Trong quá trình huấn luyện, mô hình bị "che" đi các từ ở tương lai. Điều này buộc nó chỉ được nhìn về phía bên trái (quá khứ) để dự đoán bên phải.
+- **Tại sao lại chọn Decoder-only?** Vì nó cực kỳ hiệu quả cho việc **Generative (Sáng tạo nội dung)**. Việc loại bỏ Encoder giúp mô hình tập trung toàn bộ tham số vào việc học cách duy trì mạch văn logic và mượt mà.
+
+## 2. Tokenization: BPE và SentencePiece
+
+Máy tính không đọc chữ cái, nó đọc các **Tokens**. Tokenization là bước "băm" văn bản thành các đơn vị nhỏ hơn.
+
+- **BPE (Byte Pair Encoding):** Bắt đầu bằng cách chia văn bản thành các ký tự, sau đó lặp đi lặp lại việc ghép các cặp ký tự xuất hiện nhiều nhất thành một token mới.
+    - *Ưu điểm:* Giải quyết được vấn đề **Out-of-vocabulary (OOV)** vì các từ lạ có thể được ghép từ các mảnh nhỏ hơn.
+- **SentencePiece:** Một thư viện xử lý token coi dấu cách (whitespace) như một ký tự bình thường (`_`). Điều này cực kỳ hữu ích cho các ngôn ngữ không dùng dấu cách rõ ràng như tiếng Nhật hoặc tiếng Trung.
+- **Vocabulary Size:** Thường dao động từ 32,000 đến 128,000 tokens. Kích thước này là sự đánh đổi giữa độ chi tiết và tài nguyên tính toán.
+
+## **3. Context Window: Giới hạn của "Bộ nhớ tạm"**
+
+**Context Window** là lượng dữ liệu (số lượng tokens) tối đa mà mô hình có thể "nhìn thấy" và xử lý tại một thời điểm.
+• **Thách thức toán học:** Trong cơ chế Attention truyền thống, độ phức tạp tính toán là $O(n^2)$, trong đó $n$ là chiều dài văn bản. Nếu context window tăng gấp đôi, khối lượng tính toán tăng gấp bốn.
+• **Bottleneck (Nút thắt):** Giới hạn này chủ yếu nằm ở **VRAM** của GPU. Khi văn bản quá dài, mô hình sẽ bắt đầu "quên" phần đầu hoặc bị tràn bộ nhớ.
+
+## 4. KV Cache: Bí kíp tăng tốc phản hồi
+
+Khi bạn thấy AI gõ từng chữ một cách mượt mà, đó là nhờ **KV Cache (Key-Value Cache)**.
+
+- **Vấn đề:** Ở bước dự đoán từ thứ 101, mô hình phải tính lại Attention cho 100 từ trước đó. Việc này rất lãng phí vì kết quả tính toán của 100 từ đó không hề thay đổi.
+- **Giải pháp:** Ta lưu trữ các vector **Key (K)** và **Value (V)** của các từ đã xử lý vào bộ nhớ. Ở bước tiếp theo, mô hình chỉ việc tính toán cho từ mới nhất và truy xuất các "ghi chú" cũ từ bộ nhớ đệm (Cache).
+- **Kết quả:** Giảm thiểu khối lượng tính toán khổng lồ, giúp tốc độ **Inference (Suy luận)** nhanh hơn gấp nhiều lần.
+
+## 5. Positional Encoding: Định vị trong không gian
+
+Vì Transformer xử lý toàn bộ tokens cùng lúc, nó cần một cách để biết "từ nào đứng trước, từ nào đứng sau".
+
+### RoPE (Rotary Positional Embedding)
+
+Đây là tiêu chuẩn của các mô hình hiện đại (như Llama).
+
+- **Cơ chế:** Thay vì cộng thêm một vector vị trí vào embedding, RoPE thực hiện phép **xoay (Rotation)** các vector Query và Key trong không gian 2D theo một góc tương ứng với vị trí của chúng.
+- **Ưu điểm:** Nó giữ được **Relative Position** (vị trí tương đối) giữa các từ cực tốt và có khả năng **Extrapolation** (mở rộng) ra các đoạn văn bản dài hơn so với lúc huấn luyện.
+
+### ALiBi (Attention with Linear Biases)
+
+Một phương pháp thông minh khác (thường thấy trong các mô hình như Falcon).
+
+- **Cơ chế:** Thêm một giá trị phạt (penalty) tỉ lệ thuận với khoảng cách giữa hai từ trực tiếp vào ma trận Attention.
+- **Ưu điểm:** Cho phép mô hình xử lý các chuỗi văn bản cực dài (thậm chí là vô hạn về mặt lý thuyết) mà không cần thay đổi cấu trúc nhúng.
+
+| **Thành phần** | **Công nghệ phổ biến** | **Mục tiêu chính** |
+| --- | --- | --- |
+| **Core Architecture** | Decoder-only Transformer | Tối ưu cho việc dự đoán từ tiếp theo. |
+| **Input Processing** | BPE / SentencePiece | Biến văn bản thành các mảnh (subwords) hiệu quả. |
+| **Positioning** | RoPE / ALiBi | Giúp mô hình hiểu trật tự và khoảng cách giữa các từ. |
+| **Efficiency** | KV Cache | Tiết kiệm tài nguyên, tăng tốc độ sinh văn bản. |
+| **Capacity** | Context Window | Xác định lượng thông tin mô hình có thể "đọc" một lúc. |
+
+## 6. PPO và DPO
+
+Sau khi mô hình đã học xong giai đoạn Pre-training (học tiên tri), nó giống như một bách khoa toàn thư nhưng chưa biết cách giao tiếp sao cho lịch sự và hữu ích. Để "uốn nắn" mô hình, chúng ta cần giai đoạn **Alignment (Căn chỉnh)**.
+
+**PPO** và **DPO** là hai thuật toán hàng đầu hiện nay để thực hiện việc này.
+
+---
+
+### PPO (Proximal Policy Optimization) - "Người thầy khó tính"
+
+PPO là thuật toán cốt lõi trong quy trình **RLHF (Reinforcement Learning from Human Feedback)** truyền thống, được OpenAI sử dụng để tạo ra ChatGPT.
+
+**Cơ chế hoạt động:**
+
+PPO coi việc huấn luyện AI như một trò chơi có thưởng. Nó cần 3 thành phần:
+
+1. **Policy (Mô hình AI):** Đang học cách trả lời.
+2. **Reward Model (Mô hình phần thưởng):** Một "trọng tài" đã được học từ trước để biết câu trả lời nào con người sẽ thích.
+3. **Optimization Loop:** PPO điều chỉnh Policy để tối đa hóa điểm số từ trọng tài.
+
+**Thuật ngữ chuyên ngành:**
+
+- **Clipped Objective (Mục tiêu cắt cụt):** Đây là "đặc sản" của PPO. Khi cập nhật tham số, PPO không cho phép mô hình thay đổi quá đột ngột. Nếu bước nhảy quá lớn, nó sẽ bị "cắt" (clip) lại. Điều này giúp quá trình huấn luyện cực kỳ ổn định, tránh việc mô hình bị "sập" (collapse).
+- **KL Divergence Penalty:** Một hình phạt để đảm bảo mô hình mới không đi quá xa so với mô hình gốc ban đầu, tránh việc mô hình tìm ra "lỗ hổng" của trọng tài để gian lận điểm (Reward Hacking).
+
+---
+
+### DPO (Direct Preference Optimization) - "Lối đi tắt thông minh"
+
+DPO (ra mắt năm 2023 bởi Stanford) đã gây chấn động vì nó chứng minh rằng: **Chúng ta không cần Reinforcement Learning (RL) phức tạp vẫn có thể căn chỉnh được mô hình.**
+
+**Cơ chế hoạt động:**
+
+Thay vì phải huấn luyện một "trọng tài" (Reward Model) riêng lẻ rồi mới dùng PPO để học, DPO thực hiện tối ưu hóa trực tiếp trên dữ liệu ưu tiên (**Preference Data** - cặp câu trả lời Tốt/Xấu).
+
+- **Logic:** DPO sử dụng một công thức toán học để chứng minh rằng có một mối liên hệ trực tiếp giữa xác suất của các từ và hàm phần thưởng tối ưu.
+- **Thực thi:** Nó chỉ đơn giản là tăng xác suất của câu trả lời Tốt ($y_{win}$) và giảm xác suất của câu trả lời Xấu ($y_{lose}$) so với một mô hình tham chiếu (**Reference Model**).
+
+**Thuật ngữ chuyên ngành:**
+
+- **Implicit Reward Model (Mô hình phần thưởng ngầm):** DPO không cần lưu trữ Reward Model vật lý, nó coi chính mô hình AI là một phần thưởng.
+- **Log-likelihood Ratio:** DPO tối ưu hóa tỉ lệ log giữa mô hình hiện tại và mô hình tham chiếu. Nếu tỉ lệ này của câu $y_{win}$ lớn hơn $y_{lose}$, mô hình đang đi đúng hướng.
+
+---
+
+## So sánh PPO và DPO: Đối đầu trực diện
+
+| **Đặc điểm** | **PPO (RLHF truyền thống)** | **DPO (Direct Optimization)** |
+| --- | --- | --- |
+| **Độ phức tạp** | Rất cao (cần duy trì 4 mô hình trong VRAM cùng lúc). | Thấp (chỉ cần mô hình hiện tại và mô hình tham chiếu). |
+| **Sự ổn định** | Khó hội tụ, cần tinh chỉnh siêu tham số (Hyperparameters) cực kỹ. | Rất ổn định, ít nhạy cảm với tham số. |
+| **Tài nguyên** | Tốn rất nhiều VRAM và thời gian tính toán. | Tiết kiệm tài nguyên, nhanh hơn nhiều. |
+| **Độ chính xác** | Vẫn được coi là "tiêu chuẩn vàng" cho các mô hình cực lớn. | Đang bắt kịp và đôi khi vượt qua PPO ở các mô hình tầm trung (như Llama 3). |
+
+---
+
+## Nên chọn cái nào?
+
+- **Dùng PPO khi:** Bạn là một tập đoàn lớn có tài nguyên GPU vô hạn và muốn tinh chỉnh mô hình đến mức tối đa thông qua các vòng lặp phản hồi phức tạp từ con người (Online RL).
+- **Dùng DPO khi:** Bạn muốn một quy trình huấn luyện **ổn định, nhanh chóng** và hiệu quả về mặt chi phí mà vẫn đạt được hiệu suất ngang ngửa với RLHF truyền thống. Hiện nay, hầu hết các mô hình mã nguồn mở đều chuyển sang dùng DPO hoặc các biến thể của nó như **ORPO** hay **SimPO**.
+
+---
+
+- **PPO** giống như việc thuê một huấn luyện viên riêng để giám sát từng bước chạy của vận động viên.
+- **DPO** giống như việc đưa cho vận động viên xem video về những bước chạy đúng và sai, rồi bảo họ: "Hãy bắt chước cái đúng và tránh cái sai".
+
+# Training LLM
+
+Khi huấn luyện các LLM khổng lồ, việc cập nhật toàn bộ tham số (**Full Fine-tuning**) là một "cơn ác mộng" về tài nguyên (đòi hỏi hàng trăm GB VRAM). **LoRA** và **QLoRA** ra đời như những giải pháp cứu cánh, thuộc nhóm kỹ thuật **PEFT (Parameter-Efficient Fine-Tuning)**.
+Dưới đây là phân tích chi tiết về hai kỹ thuật "nhẹ cân" nhưng cực kỳ quyền năng này.
+
+## **1. LoRA (Low-Rank Adaptation): "Ma trận hạng thấp"**
+
+LoRA dựa trên một quan sát thông minh: Khi tinh chỉnh mô hình cho một tác vụ cụ thể, sự thay đổi của các trọng số (**Weight updates**) thực chất có "hạng" (Rank) rất thấp.
+• **Cơ chế:** Thay vì cập nhật trực tiếp ma trận trọng số khổng lồ $W$ (kích thước $d \times d$), LoRA giữ nguyên (đóng băng - **Freeze**) ma trận $W$ đó. Thay vào đó, nó thêm vào hai ma trận nhỏ hơn nhiều là $A$ và $B$.
+• **Toán học:** Giả sử $W$ là ma trận gốc. Thay đổi của $W$ được biểu diễn bằng $\Delta W = A \times B$.
+    ◦ Nếu $W$ có kích thước $1000 \times 1000$ (1 triệu tham số), và ta chọn Rank $r=8$.
+    ◦ Ma trận $A$ sẽ là $1000 \times 8$, ma trận $B$ là $8 \times 1000$.
+    ◦ Tổng cộng chỉ có $8000 + 8000 = 16,000$ tham số cần huấn luyện (giảm 60 lần!).
+• **Lợi ích:**
+    ◦ **Tiết kiệm bộ nhớ:** Chỉ lưu trữ các ma trận bổ trợ (Adapters).
+    ◦ **Không có độ trễ khi suy luận (No Inference Latency):** Khi huấn luyện xong, ta có thể cộng trực tiếp $A \times B$ vào $W$ gốc. Mô hình vẫn chạy nhanh như cũ.
+
+## **2. QLoRA (Quantized LoRA): Tối ưu đến tận cùng**
+
+Nếu LoRA là một cuộc cách mạng, thì QLoRA (ra mắt năm 2023) là một bước nhảy vọt. Nó cho phép bạn tinh chỉnh một mô hình 65 tỷ tham số chỉ trên một chiếc GPU thương mại duy nhất (như RTX 3090/4090).
+QLoRA kết hợp LoRA với các kỹ thuật nén dữ liệu cực đoan:
+• **4-bit NormalFloat (NF4):** Trọng số của mô hình gốc được nén xuống còn 4-bit bằng một kiểu dữ liệu mới gọi là NF4. Kiểu dữ liệu này được thiết kế riêng cho các trọng số có phân phối chuẩn, giúp giữ được độ chính xác gần như tương đương 16-bit dù kích thước giảm đi 4 lần.
+• **Double Quantization (Lượng tử hóa kép):** QLoRA nén cả các hằng số dùng để nén trọng số (Quantization constants), tiết kiệm thêm một lượng VRAM đáng kể.
+• **Paged Optimizers:** Khi GPU bị tràn bộ nhớ, QLoRA sẽ tạm thời đẩy dữ liệu sang RAM máy tính (CPU) để tránh lỗi "Out of Memory", sau đó kéo ngược lại khi cần.
+
+## 3. FP32 (Full Precision - Số thực dấu phẩy động 32-bit)
+
+Đây là "tiêu chuẩn vàng" truyền thống. Mỗi con số chiếm 32 bit (4 byte).
+
+- **Cấu trúc:** 1 bit dấu, 8 bit số mũ (exponent), và 23 bit phần lẻ (mantissa).
+- **Ưu điểm:** Độ chính xác cực cao, dải giá trị rộng.
+- **Nhược điểm:** Tốn rất nhiều VRAM. Một mô hình 7 tỷ tham số (7B) ở định dạng FP32 sẽ tốn khoảng 28GB VRAM chỉ để load trọng số.
+
+---
+
+## 4. FP16 (Half Precision - 16-bit)
+
+Cắt giảm một nửa bộ nhớ so với FP32.
+
+- **Cấu trúc:** 1 bit dấu, 5 bit số mũ, 10 bit phần lẻ.
+- **Ưu điểm:** Giảm dung lượng mô hình xuống một nửa, tốc độ tính toán trên GPU hiện đại (Tensor Cores) nhanh hơn gấp bội.
+- **Vấn đề (Overflow/Underflow):** Vì chỉ có 5 bit cho số mũ, FP16 có dải giá trị khá hẹp. Nếu giá trị gradient quá lớn hoặc quá nhỏ, nó sẽ bị biến thành `NaN` hoặc `0`, khiến mô hình ngừng học.
+
+---
+
+## 5. BF16 (Bfloat16 - Brain Floating Point)
+
+Đây là "ngôi sao" của kỷ nguyên LLM, được Google phát triển và hiện là lựa chọn mặc định để huấn luyện mô hình.
+
+- **Cấu trúc:** 1 bit dấu, **8 bit số mũ** (giống FP32), và 7 bit phần lẻ.
+- **Tại sao nó "đỉnh"?** Bằng cách giữ nguyên 8 bit số mũ như FP32, BF16 có dải giá trị rộng tương đương FP32 nhưng chỉ tốn 16 bit. Nó hy sinh một chút độ chính xác ở phần lẻ để đổi lấy sự ổn định tuyệt vời, tránh lỗi `NaN` thường gặp ở FP16.
+- **Lưu ý:** Chỉ hỗ trợ tốt trên các dòng GPU đời mới (Nvidia Ampere như A100, RTX 30-series trở lên).
+
+---
+
+## 6. INT8 & INT4 (Lượng tử hóa - Quantization)
+
+Đây là các kiểu dữ liệu dùng để "nén" mô hình xuống mức cực đoan, thường dùng trong **Inference** (suy luận) hoặc **QLoRA**.
+
+- **INT8 (8-bit Integer):** Chuyển các số thực thành các số nguyên từ -128 đến 127. Tiết kiệm 4 lần bộ nhớ so với FP32.
+- **NF4 (4-bit NormalFloat):** Một kiểu dữ liệu đặc biệt dùng trong QLoRA. Nó nén tham số xuống chỉ còn 4 bit (0.5 byte) nhưng vẫn giữ được "linh hồn" của trọng số nhờ cách phân phối toán học thông minh.
+    - *Ví dụ:* Mô hình Llama 3 8B dùng FP32 tốn 32GB, nhưng với NF4 (4-bit), nó chỉ tốn khoảng **5.5GB**, chạy được trên cả những chiếc laptop phổ thông.
+
+| **Kiểu dữ liệu** | **Số Bit** | **Số Byte** | **Độ ổn định** | **Ứng dụng phổ biến** |
+| --- | --- | --- | --- | --- |
+| **FP32** | 32 | 4 | Cực cao | Huấn luyện cơ bản, tính toán khoa học. |
+| **FP16** | 16 | 2 | Trung bình | Tăng tốc GPU đời cũ, Inference. |
+| **BF16** | 16 | 2 | **Cao** | **Huấn luyện LLM hiện đại (Llama, GPT).** |
+| **INT8** | 8 | 1 | Thấp hơn | Chạy mô hình trên thiết bị di động, Edge AI. |
+| **NF4 / INT4** | 4 | 0.5 | Thấp nhất | **Chạy LLM cực lớn trên GPU cá nhân.** |

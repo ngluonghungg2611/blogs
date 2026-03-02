@@ -1,0 +1,136 @@
+---
+title: "TensorRT — Sự vượt trội với bài toán tối ưu mô hình Deep Learning"
+date: "2023-01-22"
+tags: ["tensorrt", "deep-learning", "nvidia", "optimization"]
+author: "Hung Nguyen"
+excerpt: "TensorRT là gì và tại sao nó vượt trội trong bài toán tối ưu mô hình Deep Learning trên GPU NVIDIA."
+coverImage: "/images/covers/tensorrt.png"
+draft: false
+---
+
+## Phần mở đầu
+
+TensorRT là một thư viện được phát triển bởi NVIDIA, dùng để tối ưu hóa mô hình AI và học máy chạy trên GPU. TensorRT giúp cải thiện tốc độ và hiệu suất khi triển khai mô hình trên các hệ thống nhúng và máy tính.
+
+Khi xây dựng các mô hình AI, chúng có thể trở nên rất nặng và tốn kém tài nguyên tính toán. TensorRT giúp khắc phục vấn đề đó: giảm thiểu tài nguyên tính toán và bộ nhớ cần thiết, cải thiện thời gian chạy mô hình.
+
+## Mô hình Deep Learning
+
+![Deep Learning](https://images.viblo.asia/35147dec-f157-4a65-b83f-6c6f6180d8b8.png)
+
+Deep Learning là một tập hợp con của Machine Learning, về cơ bản là một mạng nơ-ron có 3 lớp trở lên. Các **Deep Neural Network (DNN)** bao gồm nhiều lớp khác nhau, có khả năng thực hiện các tính toán có độ phức tạp rất cao.
+
+### Cấu trúc của mô hình Deep Learning
+
+Một mô hình học sâu được biểu diễn bằng một biểu đồ tính toán bao gồm:
+
+- **Inputs:** Dữ liệu đưa vào mô hình (image, text, audio...).
+- **Architecture:** Kiến trúc được biểu diễn là một biểu đồ.
+- **Weights:** Trọng số của mô hình, được điều chỉnh khi huấn luyện.
+- **Kernels:** Phép tính toán logic trong các lớp như conv, relu, ...
+
+## TensorRT
+
+![TensorRT](https://images.viblo.asia/71c811d5-8f2d-4cad-be32-1cbd8d0c181d.png)
+
+TensorRT thực hiện các loại tối ưu để tăng hiệu suất inference:
+
+- Precision Calibration
+- Layer and Tensor Fusion
+- Kernel Auto-Tuning
+- Dynamic Tensor Memory
+- Multi-Stream Execution
+
+### Precision Calibration
+
+Quá trình tùy chỉnh độ chính xác sao cho phù hợp với khả năng tính toán của thiết bị triển khai. Các parameters với độ chính xác FP32 sẽ được convert về FP16 hoặc INT8, giúp tăng tốc inference — đây là sự đánh đổi giữa độ chính xác và tốc độ, phù hợp với nhận diện real-time.
+
+### Layer and Tensor Fusion
+
+![Layer Fusion](https://images.viblo.asia/1a4647cf-7505-4415-add0-cf17901e015c.png)
+
+**Layer Fusion:** Kết hợp nhiều lớp thành một lớp duy nhất. Ví dụ: convolutional layer + ReLU → `ConvolutionalActivation Layer`.
+
+**Tensor Fusion:** Kết hợp các phép tính trên tensor để giảm số lượng tensor trung gian. Ví dụ: conv + batch normalization → `ConvolutionalBatchNorm layer`.
+
+### Kernel Auto-Tuning
+
+Tự động tìm kiếm và tối ưu các tham số của các kernel tính toán trên GPU bằng cách thử nghiệm nhiều giá trị khác nhau dựa trên các thông số: `batch_size`, `filter-size`, `input data size`.
+
+### Dynamic Tensor Memory
+
+Chỉ phân bổ bộ nhớ cần thiết cho mỗi tensor trong suốt thời gian sử dụng của nó, giúp tiết kiệm tài nguyên và tăng tính linh hoạt.
+
+### Multiple-Stream Execution
+
+Cho phép mô hình AI chạy đồng thời trên nhiều luồng GPU, tăng tính song song và giảm thời gian trễ.
+
+## Cơ chế hoạt động của TensorRT
+
+- **Quantization:** Giảm kích thước tham số bằng cách giảm số bit biểu diễn (FP32 → FP16/INT8).
+- **Pruning:** Loại bỏ các trọng số không cần thiết bằng cách đặt chúng bằng 0.
+- **Fusion:** Kết hợp các phép tính nhỏ thành một phép tính lớn.
+- **Kernel auto-tuning:** Tìm kiếm kernel tối ưu cho mô hình và GPU cụ thể.
+- **Precision calibration:** Tìm giá trị có độ chính xác tốt nhất để tính toán.
+
+## Tiến hành cài đặt và triển khai TensorRT
+
+### Cài đặt NVIDIA driver
+
+```bash
+ubuntu-drivers devices  # check driver của card đồ họa
+sudo apt install nvidia-driver-440  # recommend version
+```
+
+### Cài đặt CUDA-toolkit
+
+```bash
+# Install by apt
+sudo apt install nvidia-cuda-toolkit
+# Check
+nvidia-smi
+```
+
+### Cài đặt TensorRT
+
+```bash
+os="ubuntuxx04"
+tag="8.x.x-cuda-x.x"
+sudo dpkg -i nv-tensorrt-local-repo-${os}-${tag}_1.0-1_amd64.deb
+sudo cp /var/nv-tensorrt-local-repo-${os}-${tag}/*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get install tensorrt
+sudo apt-get install python3-libnvinfer-dev
+pip3 install tensorrt
+```
+
+## Triển khai với mô hình PyTorch (YOLOv8)
+
+```bash
+# Convert YOLOv8 sang TensorRT
+yolo mode=export model=yolov8n.pt format=engine device=0
+```
+
+```python
+# Inference với TensorRT
+from ultralytics import YOLO
+import cv2
+
+model = YOLO('yolov8n.engine')
+result = model('images/image003_4.jpg')[0]
+
+boxes = result.boxes.xywh.cpu().numpy()
+image_drawed = result.plot()
+cv2.imwrite("result_tensorRT.jpg", image_drawed)
+```
+
+## Đánh giá và kết luận
+
+TensorRT là công cụ mạnh mẽ để triển khai mô hình trên các thiết bị GPU. Với các kỹ thuật tối ưu hóa như Fusion, Precision Calibration và Kernel Auto-Tuning, TensorRT giúp mô hình đạt tốc độ vượt trội, hỗ trợ nhiều kiến trúc GPU và tích hợp dễ dàng.
+
+## Tham khảo
+
+- [Ultralytics](https://github.com/ultralytics/ultralytics)
+- [TensorRT Sample Support Guide](https://docs.nvidia.com/deeplearning/tensorrt/sample-support-guide/index.html)
+- [Convert PyTorch to TensorRT](https://learnopencv.com/how-to-convert-a-model-from-pytorch-to-tensorrt-and-speed-up-inference/)
+- [NVIDIA Developer](https://developer.nvidia.com/)

@@ -1,0 +1,126 @@
+---
+title: "Neo4j — Cơ sở dữ liệu đồ thị"
+date: "2023-01-22"
+tags: ["database", "neo4j", "graph-database"]
+author: "Hung Nguyen"
+excerpt: "Giới thiệu về Neo4j, cơ sở dữ liệu đồ thị — ưu điểm so với cơ sở dữ liệu quan hệ, cách lưu trữ mối quan hệ và truy vấn Cypher."
+coverImage: "/images/covers/neo4j.jpg"
+draft: false
+---
+
+## Tại sao dùng cơ sở dữ liệu đồ thị thay vì cơ sở dữ liệu quan hệ?
+
+Cơ sở dữ liệu đồ thị được thiết kế đặc biệt để quản lý và truy vấn các **mối quan hệ phức tạp** giữa các thực thể. Dưới đây là các lợi ích chính:
+
+1. **Xử lý Quan hệ Hiệu quả** — Sử dụng nút và cạnh để biểu diễn thực thể và kết nối, việc duyệt qua các mối quan hệ nhanh hơn và tự nhiên hơn so với phép `JOIN` trong RDBMS.
+
+2. **Mô Hình Dữ Liệu Linh Hoạt** — Không yêu cầu sơ đồ cố định, dễ thích nghi với cấu trúc dữ liệu thay đổi theo thời gian.
+
+3. **Biểu Diễn Trực Quan** — Mô hình đồ thị phù hợp tự nhiên với mạng xã hội, hệ thống gợi ý, phát hiện gian lận.
+
+4. **Hiệu Suất Với Truy Vấn Phức Tạp** — Vượt trội khi thực hiện truy vấn nhiều tầng quan hệ mà không gặp chi phí hiệu suất từ phép nối.
+
+5. **Phù Hợp Với Dữ Liệu Phân Cấp** — Biểu diễn cấu trúc tổ chức, phân loại danh mục một cách tự nhiên.
+
+6. **Khả Năng Mở Rộng** — Hỗ trợ mở rộng ngang (horizontal scaling) cho dữ liệu lớn và truy vấn phức tạp.
+
+---
+
+## Cách Neo4j Lưu Trữ Mối Quan Hệ
+
+Neo4j **không** sử dụng chỉ mục để lưu trữ mối quan hệ. Thay vào đó, Neo4j dùng **mô hình lưu trữ đồ thị gốc (native graph storage)**.
+
+### Native Graph Storage
+
+- **Nút và Mối Quan Hệ** được lưu dưới dạng bản ghi trực tiếp trên đĩa. Các nút chứa con trỏ đến mối quan hệ lân cận; mối quan hệ chứa con trỏ đến nút bắt đầu và nút kết thúc.
+- Cho phép duyệt đồ thị với **thời gian hằng số** — không cần chỉ mục để điều hướng mối quan hệ.
+- **Chỉ mục** chỉ dùng để tra cứu nút ban đầu dựa trên thuộc tính.
+
+### Ví dụ truy vấn Cypher
+
+```cypher
+MATCH (a:Person {name: 'Alice'})-[:FRIEND_OF]->(b)
+RETURN b
+```
+
+1. **Chỉ mục Nút** được dùng để nhanh chóng tìm nút `Person` với `name: 'Alice'`.
+2. **Duyệt qua con trỏ** — sau khi tìm thấy nút, Neo4j duyệt quan hệ `FRIEND_OF` qua con trỏ trong cấu trúc đồ thị, không phải qua chỉ mục.
+
+---
+
+## Thuộc tính (Properties) trong Neo4j
+
+> **Thuộc tính trong Neo4j là các cặp khóa-giá trị** dùng để lưu trữ thông tin trên các nút và mối quan hệ, cho phép nắm bắt thông tin bổ sung về thực thể và kết nối trong đồ thị.
+
+### Các đặc điểm chính
+
+1. **Cặp Khóa-Giá Trị** — Khóa là chuỗi mô tả tên thuộc tính; giá trị có thể là chuỗi, số, boolean, danh sách, hoặc mảng.
+
+2. **Đính Kèm với Nút và Mối Quan Hệ** — Cả nút lẫn quan hệ đều có thể có thuộc tính.
+
+3. **Sơ Đồ Linh Hoạt** — Không cần định nghĩa trước; mỗi nút hoặc quan hệ có thể có tập hợp thuộc tính riêng.
+
+4. **Có thể lập chỉ mục** — Để cải thiện hiệu suất truy vấn tìm kiếm và lọc.
+
+### Ví dụ
+
+```cypher
+// Thuộc tính nút
+(:Person {name: "Alice", age: 30, city: "New York"})
+(:Person {name: "Bob", age: 25, city: "San Francisco"})
+
+// Thuộc tính mối quan hệ
+(Alice)-[:FRIEND_OF {since: 2020}]->(Bob)
+```
+
+---
+
+## Mô Hình Đồ Thị Thuộc Tính (Property Graph Model)
+
+Mô hình đồ thị thuộc tính bao gồm 4 thành phần chính:
+
+| Thành phần | Mô tả |
+| --- | --- |
+| **Nút (Nodes)** | Đại diện cho thực thể. Có thể có thuộc tính (key-value) và nhãn (labels). |
+| **Mối Quan Hệ (Relationships)** | Kết nối giữa các nút, có hướng và loại (type). Cũng có thể có thuộc tính. |
+| **Thuộc Tính (Properties)** | Cặp khóa-giá trị gắn với nút hoặc quan hệ. Hỗ trợ nhiều kiểu dữ liệu. |
+| **Nhãn (Labels)** | Nhóm các nút vào danh mục (ví dụ `:Person`, `:Product`). Dùng để lọc và tổ chức dữ liệu. |
+
+**Lưu ý quan trọng:** Trong Neo4j, mỗi mối quan hệ chỉ kết nối **đúng hai nút**, giúp tạo ra cấu trúc đồ thị rõ ràng với kết nối có định hướng.
+
+---
+
+## Neo4j hỗ trợ giao dịch ACID
+
+Neo4j thực hiện đầy đủ tiêu chuẩn ACID:
+
+| Thuộc tính | Ý nghĩa |
+| --- | --- |
+| **Atomicity** | Tất cả các thay đổi trong một giao dịch hoặc hoàn toàn được thực hiện, hoặc không có thay đổi nào. |
+| **Consistency** | Giao dịch đưa database từ trạng thái hợp lệ này sang trạng thái hợp lệ khác. |
+| **Isolation** | Các giao dịch song song không ảnh hưởng lẫn nhau. |
+| **Durability** | Sau khi giao dịch đã cam kết, dữ liệu được lưu vĩnh viễn ngay cả khi có sự cố hệ thống. |
+
+---
+
+## Phân tích kế hoạch truy vấn Cypher — Red Flags
+
+Khi phân tích `EXPLAIN` / `PROFILE` trong Neo4j, chú ý các dấu hiệu sau:
+
+| Red Flag | Vấn đề | Giải pháp |
+| --- | --- | --- |
+| **Full Scan** | Quét toàn bộ nút/quan hệ, không dùng chỉ mục. | Tạo chỉ mục cho thuộc tính được truy vấn. |
+| **Wide Relationship Patterns** | Mẫu quan hệ quá rộng, xử lý nhiều dữ liệu thừa. | Thêm điều kiện lọc để thu hẹp phạm vi. |
+| **Incremental Computation** | Nhiều bước tính toán lặp đi lặp lại. | Tối ưu hóa truy vấn để giảm số bước. |
+| **High Result Count** | Số lượng kết quả trả về rất cao → overhead xử lý. | Dùng `LIMIT`, `WHERE` để lọc kết quả. |
+| **Slow Lookup Times** | Tìm kiếm nút/quan hệ rất chậm. | Đảm bảo chỉ mục đúng chỗ và truy vấn được viết tối ưu. |
+| **Poor Data Model Integration** | Nhiều join phức tạp, mô hình dữ liệu không phù hợp. | Xem xét cải thiện thiết kế đồ thị. |
+
+---
+
+## Ứng dụng của Neo4j
+
+- **Mạng Xã Hội** — Theo dõi kết nối, xác định ảnh hưởng, tìm kiếm mối quan hệ.
+- **Hệ Thống Gợi Ý** — Đề xuất sản phẩm/nội dung dựa trên thông tin quan hệ.
+- **Phát Hiện Gian Lận** — Phân tích mối quan hệ để phát hiện hoạt động gian lận trong giao dịch tài chính.
+- **Quản Lý Dữ Liệu Đa Chiều** — Mô hình hóa cấu trúc phân cấp hoặc mạng lưới phức tạp.

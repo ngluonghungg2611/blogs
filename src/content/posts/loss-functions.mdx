@@ -1,0 +1,93 @@
+---
+title: "Loss function và những điều chắc chắn bạn sẽ cần biết"
+date: "2023-01-22"
+tags: ["machine-learning", "deep-learning", "loss-functions"]
+author: "Hung Nguyen"
+excerpt: "Các hàm loss functions cơ bản mà các bạn cần nắm được — từ Square Loss đến Binary Cross-Entropy."
+coverImage: "/images/covers/loss-functions.png"
+draft: false
+---
+
+Hàm mất mát hay loss function là khái niệm mà chắc hẳn nếu bạn đã và đang học tập và nghiên cứu về các bài toán về học máy thì sẽ được nghe rất nhiều. Hãy cùng tôi tìm hiểu xem loss function được hình thành như thế nào nhé.
+
+## Overviews
+
+Trong các thuật toán về mảng AI cổ điển, loss function có thể là một đối tượng mục tiêu của quá trình tìm kiếm sao cho loss function sau quá trình tìm kiếm thu được giá trị nhỏ nhất hoặc gần 0 nhất và không âm.
+
+Trong học máy, việc một mô hình được huấn luyện để có kết quả tốt khi dự đoán bản chất chính là việc thuật toán thay đổi các tham số bên trong mô hình để sao cho loss của mô hình trở nên tối ưu nhất có thể. Việc thay đổi trọng số thường được thực hiện bằng các thuật toán di chuyển theo độ dốc của đạo hàm (hay còn gọi là **Gradient Descent**).
+
+Về mặt toán học, loss function sẽ trả ra một số không âm thể hiện sự chênh lệch giữa $y_{pred}$ (label được dự đoán) và $y_{truth}$ (label đúng).
+
+## Cách xây dựng loss function
+
+Dựa trên lý thuyết, có thể dễ dàng xây dựng loss function là hiệu của $y_{pred}$ và $y_{truth}$:
+
+$$
+L_{(y_{pred}, y_{truth})} = y_{pred} - y_{truth}
+$$
+
+Tuy nhiên loss function phải là hàm không âm. Ta thêm trị tuyệt đối:
+
+$$
+L_{(y_{pred}, y_{truth})} = |y_{pred} - y_{truth}|
+$$
+
+Vì trị tuyệt đối không có đạo hàm liên tục tại $x = 0$, ta dùng bình phương:
+
+$$
+L_{(y_{pred}, y_{truth})} = (y_{pred} - y_{truth})^2
+$$
+
+Thêm $\frac{1}{2}$ để đạo hàm gọn hơn — đây là **Square Loss**:
+
+$$
+L_{(y_{pred}, y_{truth})} = \frac{1}{2}(y_{pred} - y_{truth})^2
+$$
+
+Áp dụng với tất cả các cặp $(x_i, y_i)$ với $i = 1,2,...,N$:
+
+$$
+L_{(w)} = \frac{1}{2} \sum_{i=1}^{N}(x_i \cdot w - y_i)^2
+$$
+
+## Loss function với bài toán classification
+
+Khi giá trị $y$ giao động trong một tập label rời rạc thì ta có bài toán classification. Dưới đây là một số loss function phổ biến trong **binary classification**:
+
+### Binary Cross-Entropy Loss (Log Loss)
+
+Đây là hàm loss phổ biến nhất trong phân loại nhị phân:
+
+$$
+L_{(y,y_{pred})} = -\left(y \cdot \log(y_{pred}) + (1-y) \cdot \log(1-y_{pred})\right)
+$$
+
+### Hinge Loss (Support Vector Machine Loss)
+
+Được sử dụng trong Support Vector Machines (SVM):
+
+$$
+L_{(y,f)} = \max(0, 1 - y \cdot f)
+$$
+
+Trong đó $f$ là giá trị đầu ra của mô hình trước khi qua hàm kích hoạt.
+
+### Sigmoid Cross-Entropy Loss
+
+Tương tự như binary cross-entropy, nhưng có thêm hàm sigmoid:
+
+$$
+L(y,y_{pred}) = -\left(y \cdot \log(\sigma(y_{pred})) + (1-y) \cdot \log(1-\sigma(y_{pred}))\right)
+$$
+
+Trong đó $\sigma$ là hàm sigmoid.
+
+## Tổng kết
+
+Hàm mất mát không chỉ là phương tiện đo lường chênh lệch giữa dự đoán và thực tế, mà còn là công cụ quan trọng trong quá trình huấn luyện và tối ưu hóa mô hình. Lựa chọn đúng hàm mất mát tùy thuộc vào bản chất của bài toán:
+
+- **Square Loss** → bài toán regression
+- **Binary Cross-Entropy** → binary classification (phổ biến nhất)
+- **Hinge Loss** → SVM
+
+Cảm ơn bạn đã ghé đọc bài viết này!

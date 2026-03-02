@@ -1,0 +1,156 @@
+---
+title: "Technical Review: GenAI, LLM, RAG và AI Agents"
+date: "2023-01-22"
+tags: ["llm", "ai", "rag", "transformers", "deep-learning", "genai"]
+author: "Hung Nguyen"
+excerpt: "Rà soát kỹ thuật về GenAI so với Rule-based AI, kiến trúc Transformer, Fine-tune vs Prompt Engineering, AI Agents và RAG."
+draft: false
+---
+
+## I. GenAI khác gì với truyền thống Rule-based AI? Ưu nhược điểm?
+
+GenAI và AI truyền thống rule-based khác nhau rõ rệt về cách hoạt động, phạm vi ứng dụng và ưu-nhược điểm.
+
+### 1. Cách hoạt động
+
+| Tiêu chí | **Rule-based AI** | **GenAI (Generative AI)** |
+| --- | --- | --- |
+| **Nguyên lý** | Dựa trên tập hợp **luật IF-ELSE** được lập trình thủ công. | Dựa trên **mô hình học máy** (ML/DL), đặc biệt là **Transformer**, để học quy luật từ dữ liệu và tạo đầu ra mới. |
+| **Dữ liệu** | Ít phụ thuộc dữ liệu, chỉ cần các luật và tri thức do con người xác định. | Cần **khối lượng dữ liệu lớn** để huấn luyện. |
+| **Đầu ra** | Mang tính **deterministic** (đầu ra luôn giống nhau với cùng đầu vào). | Mang tính **probabilistic** (có thể khác nhau mỗi lần, mang tính sáng tạo). |
+| **Cập nhật** | Phải chỉnh sửa luật thủ công khi có yêu cầu mới. | Có thể huấn luyện hoặc fine-tune để học kiến thức mới tự động. |
+| **Khả năng tổng quát hóa** | Khó tổng quát ngoài phạm vi các luật được viết sẵn. | Có khả năng **generalize** sang tình huống chưa từng gặp. |
+
+### 2. Ưu và nhược điểm
+
+|  | **Rule-based AI** | **GenAI** |
+| --- | --- | --- |
+| **Ưu điểm** | Dễ giải thích, dễ audit. Hoạt động ổn định, dự đoán được kết quả. Không cần dữ liệu huấn luyện lớn. | Có khả năng sáng tạo. Tổng quát hóa tốt. Có thể tự cải thiện nếu được fine-tune / retrain. |
+| **Nhược điểm** | Khó mở rộng nếu số luật lớn (rule explosion). Không xử lý tốt bài toán phức tạp. Không "học" được từ dữ liệu. | Khó giải thích (black box). Cần dữ liệu và tài nguyên lớn. Có thể tạo ra kết quả sai (hallucination). |
+
+### 3. Ứng dụng điển hình
+
+- **Rule-based AI:** Chatbot FAQ, hệ chuyên gia y học, phát hiện gian lận theo ngưỡng cố định, game AI cổ điển.
+- **GenAI:** ChatGPT, Midjourney, GitHub Copilot, hệ thống tổng hợp nội dung tự động, phân tích ngôn ngữ tự nhiên nâng cao.
+
+---
+
+## II. LLM hoạt động như thế nào? Có gì đặc biệt về kiến trúc Transformer?
+
+### 1. LLM là gì và hoạt động thế nào?
+
+**LLM (Large Language Model)** là mô hình AI học từ lượng **dữ liệu văn bản cực lớn** để dự đoán token tiếp theo trong một chuỗi. Từ đó có thể **tạo văn bản, trả lời câu hỏi, dịch, tóm tắt, viết code**, v.v.
+
+**Quy trình hoạt động cơ bản:**
+
+- **Tiền xử lý dữ liệu:** Văn bản huấn luyện được biến thành các **token** (số).
+- **Huấn luyện:** Mô hình học cách dự đoán token tiếp theo dựa trên các token trước đó.
+- **Suy luận (Inference):** Khi nhập một câu, mô hình dự đoán token tiếp theo nhiều lần → sinh ra câu trả lời hoàn chỉnh.
+- **Điều chỉnh (Fine-tuning / RLHF):** Được tinh chỉnh để an toàn, hữu ích và có phong cách giao tiếp tự nhiên.
+
+> LLM không "hiểu" như con người, mà **tính toán xác suất** token nào nên xuất hiện tiếp theo dựa trên bối cảnh.
+
+### 2. Kiến trúc Transformer – Điều đặc biệt
+
+| Thành phần | Mô tả |
+| --- | --- |
+| **Embedding Layer** | Biến token thành vector (số thực). |
+| **Positional Encoding** | Thêm thông tin vị trí để mô hình biết thứ tự từ trong câu. |
+| **Self-Attention** | Cho phép mỗi từ **nhìn vào các từ khác** để hiểu ngữ cảnh. |
+| **Feed-Forward Network** | Mạng fully-connected nhỏ xử lý vector sau attention. |
+| **Residual Connection + Layer Norm** | Giúp mô hình ổn định khi học sâu, tránh mất thông tin. |
+| **Decoder (LLM dạng sinh)** | Dùng attention có mask để chỉ nhìn các từ trước, tránh "nhìn trộm" từ tương lai. |
+
+**Transformer so với RNN/LSTM:**
+
+|  | **RNN/LSTM** | **Transformer** |
+| --- | --- | --- |
+| **Xử lý** | Tuần tự (token 1 → 2 → 3…), khó song song hóa. | Xử lý **song song** toàn bộ chuỗi nhờ self-attention. |
+| **Quan hệ xa** | Gặp khó khăn khi từ cách xa nhau (long-term dependencies). | Attention cho phép kết nối **mọi từ với mọi từ** trực tiếp. |
+| **Hiệu suất** | Chậm khi chuỗi dài. | Nhanh, dễ huấn luyện với GPU/TPU. |
+
+### 3. Khả năng sinh text của Transformer (Autoregressive Decoder)
+
+- Nhận đầu vào là chuỗi (prompt): các token được embedding + positional encoding, truyền qua các lớp decoder
+- **Masked self-Attention:** Mỗi token chỉ được nhìn các token trước đó (mask che đi các token sau)
+- **Dự đoán token tiếp theo:** Output cuối đưa qua `Linear + Softmax` → phân phối xác suất trên toàn bộ từ vựng → chọn bằng greedy hoặc sampling (top-k, nucleus)
+- **Lặp lại** cho đến khi gặp token dừng (EOS) hoặc đạt độ dài tối đa
+
+---
+
+## III. Sự khác nhau giữa Fine-tune và Prompt Engineering?
+
+| | **Prompt Engineering** | **Fine-tuning** |
+| --- | --- | --- |
+| **Khái niệm** | Thiết kế câu lệnh để model cho ra đầu ra mong muốn **không thay đổi tham số**. | Huấn luyện lại model trên dữ liệu bổ sung để **cập nhật trọng số**. |
+| **Chi phí** | Rất rẻ, chỉ tốn chi phí inference. | Tốn tài nguyên (GPU/TPU), thời gian, công sức chuẩn bị dữ liệu. |
+| **Linh hoạt** | Thay đổi dễ dàng ngay lúc chạy. | Ít linh hoạt hơn — mỗi lần cập nhật phải huấn luyện lại. |
+| **Độ chính xác** | Phụ thuộc vào khả năng hiểu prompt của model. | Chính xác, nhất quán nếu dữ liệu fine-tune chất lượng. |
+| **Mục tiêu** | Hướng dẫn model **"hành xử"** theo cách mong muốn (role, style, format). | Làm cho model **học thêm kiến thức hoặc kỹ năng** mới. |
+
+---
+
+## IV. Một Agent AI tốt cần những thành phần gì?
+
+| Thành phần | Vai trò | Lưu ý thiết kế |
+| --- | --- | --- |
+| **1. Mục tiêu (Goal / Task Spec)** | Định nghĩa rõ agent phải làm gì. | Nên cụ thể, có tiêu chí thành công (success criteria). |
+| **2. Reasoning Engine (LLM)** | "Bộ não" của agent: lập kế hoạch, suy luận, ra quyết định. | Chọn LLM có khả năng reasoning tốt (GPT-4, Claude Opus, Llama 3 70B). |
+| **3. Memory** | Lưu thông tin bối cảnh: kết quả trung gian, conversation history. | Short-term (context window) & long-term (Vector DB như ChromaDB). |
+| **4. Tools / API** | Cho phép agent tương tác với thế giới thật. | Cần giới hạn quyền, log mọi hành động để tránh rủi ro. |
+| **5. Planner** | Lên kế hoạch đa bước: chọn tool nào, chạy theo thứ tự nào. | Có thể dùng ReAct, Chain-of-Thought, Tree-of-Thought. |
+| **6. Executor** | Thực hiện từng bước, xử lý lỗi, lặp lại nếu cần. | Cần timeout, retry, circuit breaker để tránh kẹt loop. |
+| **7. Verifier / Critic** | Đánh giá kết quả trước khi trả về, giảm hallucination. | Có thể dùng LLM thứ hai để review (self-critique). |
+| **8. Observation & Audit** | Ghi log toàn bộ quá trình: input, output, tool calls. | Đảm bảo traceability và compliance. |
+
+---
+
+## V. RAG là gì? Triển khai RAG để đảm bảo tốc độ & độ chính xác
+
+**RAG — Retrieval-Augmented Generation** là mô hình kết hợp **retrieval (tra cứu)** và **generation (sinh)**: trước khi dùng LLM để trả lời, hệ thống **tìm tài liệu liên quan** trong kho dữ liệu (vector DB, search index), đưa nội dung đó vào context của LLM để **giảm hallucination** và tăng chính xác.
+
+### 1. Kiến trúc cơ bản của RAG
+
+- **Indexing:** Tách tài liệu thành các *chunk* → tạo embeddings → lưu vào vector DB kèm *metadata* (source, date, doc_id).
+- **Retrieval:** Với truy vấn user: tạo embedding truy vấn → ANN search (k-NN) trả về top-k chunk liên quan.
+- **Reranking (optional):** Dùng cross-encoder để xếp lại/lọc top-k, nâng độ chính xác.
+- **Context Construction:** Ghép các chunk đã chọn vào prompt theo template (kèm citation, instruction cho LLM).
+- **Generation:** Gọi LLM với context đã chuẩn bị → LLM sinh câu trả lời dựa trên bằng chứng.
+- **Post-processing:** Chèn trích dẫn nguồn, kiểm tra tính nhất quán nếu cần.
+
+### 2. Tối ưu độ chính xác
+
+- **Chunking hợp lý:** chunk ~300–1000 token; dùng *overlap* (50–200 token) để giữ ngữ cảnh xuyên đoạn.
+- **Metadata filtering:** gắn tag (lang, date, doc_type) để lọc sớm.
+- **Hybrid retrieval (sparse + dense):** kết hợp BM25/Elastic + dense vectors — sparse bắt key-terms, dense bắt semantic.
+- **Reranker cross-encoder:** sau ANN lấy top-50, dùng cross-encoder để chọn top-5/10. Chậm hơn nhưng cải thiện precision rõ rệt.
+- **Prompt engineering:** bảo model luôn trích dẫn nguồn và nói "tôi không biết" khi không có bằng chứng đủ.
+
+### 3. Tối ưu tốc độ
+
+- **ANN index hiệu quả:** HNSW hoặc IVF+PQ để có trade-off latency/recall tốt.
+- **Quantization / Compression:** lưu vectors đã nén để giảm I/O và memory.
+- **Warm cache:** cache kết quả truy vấn phổ biến; cache prompt→response pair nếu câu hỏi trùng lặp.
+- **Batching & async:** batch nhiều truy vấn embedding cùng lúc; gọi ANN và LLM bất đồng bộ để giảm latency.
+
+---
+
+## VI. Các phương pháp Chunking
+
+| Phương pháp | Mô tả | Ưu điểm | Nhược điểm | Khi dùng |
+| --- | --- | --- | --- | --- |
+| **Fixed-size** | Chia theo số token/ký tự cố định (ví dụ 500 token). | Đơn giản, dễ triển khai. | Có thể cắt ngang câu, mất ngữ nghĩa. | Dữ liệu đồng nhất. |
+| **Fixed-size + Overlap** | Chia cố định nhưng có **overlap** 10–30% với chunk trước. | Giữ liền mạch ngữ cảnh, giảm mất thông tin ở biên. | Tăng số chunk → tốn dung lượng & cost. | Tài liệu có mạch logic dài. |
+| **Semantic / Adaptive** | Dùng NLP → cắt theo câu hoặc đoạn, hoặc khi có thay đổi chủ đề. | Chunk tự nhiên, ít mất ngữ cảnh. | Phức tạp hơn, cần pipeline NLP. | Dữ liệu đa dạng: FAQ, báo, nghiên cứu khoa học. |
+| **Sliding Window** | Cửa sổ di chuyển theo từng bước nhỏ (overlap cao). | Đảm bảo bao phủ tối đa, không bỏ sót thông tin. | Tạo nhiều chunk trùng nhau → tăng storage. | Khi ưu tiên recall cao. |
+| **Hierarchical** | Tạo nhiều cấp độ: cấp đoạn (small) và cấp chương/mục (big). | Cho phép retrieve theo mức độ khái quát khác nhau. | Tốn thêm bước xử lý. | Dữ liệu phức tạp, cần search cả overview và chi tiết. |
+| **Structural (theo cấu trúc tài liệu)** | Dựa vào header, mục lục, JSON key… để chia. | Rất sát nghĩa, giữ nguyên context logic. | Cần hiểu cấu trúc dữ liệu đầu vào. | Dữ liệu có cấu trúc rõ (wiki, API docs, luật). |
+
+**Best Practices:**
+- Chunk size lý tưởng: **300–1000 token** (tùy domain)
+- Overlap: **10–20%** để giữ mạch ngữ cảnh
+- Không cắt giữa câu — ưu tiên cắt theo dấu câu, tiêu đề, bullet points
+- Gắn metadata: `doc_id`, `page`, `heading` để filter khi truy vấn
+- A/B test các kích thước chunk (400 / 600 / 800 token) để tìm optimum
+
+> **Trade-off:** Chunk nhỏ → tăng recall nhưng mất ngữ cảnh. Chunk lớn → giữ ngữ cảnh nhưng giảm độ khớp. Overlap quá nhiều → tăng chi phí embedding & search.

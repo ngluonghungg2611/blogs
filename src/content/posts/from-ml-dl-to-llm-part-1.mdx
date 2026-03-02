@@ -1,0 +1,191 @@
+---
+title: "From ML/DL to LLM Series - Part 1: Machine Learning and Deep Learning"
+date: "2023-01-22"
+tags: ["machine-learning", "deep-learning", "llm"]
+author: "Hung Nguyen"
+excerpt: "Tổng quan về Supervised, Unsupervised, Self-supervised learning, Gradient Descent, Adam, Loss functions, và Word Embeddings trong NLP."
+coverImage: "/images/covers/from-ml-dl-to-llm-part-1.webp"
+draft: false
+---
+
+# **I. Supervised / Unsupervised / Self-supervised learning**
+
+## **1. Supervised Learning (Học có giám sát)**
+
+Đây là phương pháp phổ biến nhất, nơi mô hình đóng vai trò như một học sinh có thầy giáo chỉ dạy tận tình.
+• **Cơ chế:** Mô hình học trên một tập dữ liệu đã được gán nhãn (**Labeled Data**). Mỗi đầu vào $X$ sẽ đi kèm với một đáp án đúng $Y$ (gọi là **Ground Truth**).
+• **Mục tiêu:** Tìm ra một hàm số $f(X) = Y$ sao cho sai số (**Loss**) giữa dự báo và thực tế là nhỏ nhất.
+• **Thuật ngữ chuyên ngành:**
+    ◦ **Classification (Phân loại):** Dự đoán nhãn rời rạc (Ví dụ: Email này là Spam hay không).
+    ◦ **Regression (Hồi quy):** Dự đoán giá trị liên tục (Ví dụ: Dự báo giá nhà).
+    ◦ **Overfitting:** Khi mô hình "học vẹt" quá kỹ dữ liệu có nhãn mà mất đi khả năng tổng quát hóa trên dữ liệu mới.
+
+## **2. Unsupervised Learning (Học không giám sát)**
+
+Ở đây, "thầy giáo" biến mất. Mô hình phải tự mình bơi trong một bể dữ liệu khổng lồ không có nhãn để tìm ra các cấu trúc ẩn giấu.
+• **Cơ chế:** Mô hình chỉ nhận vào $X$ mà không có $Y$. Nó phân tích sự phân phối (**Distribution**) và đặc điểm (**Features**) của dữ liệu để nhóm chúng lại.
+• **Mục tiêu:** Khám phá cấu trúc tiềm ẩn (**Latent Structure**) của dữ liệu.
+• **Thuật ngữ chuyên ngành:**
+    ◦ **Clustering (Phân cụm):** Nhóm các đối tượng tương đồng lại với nhau (Ví dụ: K-Means để phân khúc khách hàng).
+    ◦ **Dimensionality Reduction (Giảm chiều dữ liệu):** Nén dữ liệu từ nhiều đặc trưng xuống ít hơn mà vẫn giữ được thông tin quan trọng (Ví dụ: PCA).
+    ◦ **Anomaly Detection:** Phát hiện những điểm dữ liệu "lạ" so với số đông.
+
+## 3. Self-supervised Learning (Học tự giám sát)
+
+Đây là "ngôi sao đang lên" và là nền tảng của các mô hình ngôn ngữ lớn như GPT hay BERT. Nó là một dạng đặc biệt của học không giám sát nhưng lại mượn kỹ thuật của học có giám sát.
+
+- **Cơ chế:** Thay vì cần con người gán nhãn, mô hình tự tạo ra "nhãn giả" (**Pseudo-labels**) từ chính dữ liệu thô. Nó tự che đi một phần dữ liệu và cố gắng dự đoán phần đó.
+- **Mục tiêu:** Học được các đặc trưng ngữ cảnh (**Contextual Representations**) sâu sắc trước khi chuyển sang các nhiệm vụ cụ thể.
+- **Thuật ngữ chuyên ngành:**
+    - **Pretext Task:** Nhiệm vụ phụ để học đặc trưng (Ví dụ: Che một từ trong câu và bắt mô hình đoán từ đó - Masked Language Modeling).
+    - **Downstream Task:** Nhiệm vụ thực tế mà ta muốn giải quyết sau khi đã có mô hình "hiểu" dữ liệu (Ví dụ: Phân tích cảm xúc).
+    - **Contrastive Learning:** Học bằng cách so sánh để nhận diện hai mẫu dữ liệu giống hay khác nhau.
+
+| **Đặc điểm** | **Supervised** | **Unsupervised** | **Self-supervised** |
+| --- | --- | --- | --- |
+| **Dữ liệu** | Cần nhãn (đắt đỏ) | Không cần nhãn | Tự tạo nhãn từ dữ liệu thô |
+| **Vai trò** | Giải quyết bài toán cụ thể | Khám phá cấu trúc | Học hiểu dữ liệu tổng quát |
+| **Ứng dụng tiêu biểu** | Nhận diện khuôn mặt | Phân khúc khách hàng | Huấn luyện GPT, BERT |
+
+# **II. Gradient descent, Adam, learning rate schedule**
+
+Trong thế giới Machine Learning, việc huấn luyện một mô hình thực chất là một bài toán **Tối ưu hóa (Optimization)**. Mục tiêu cuối cùng là tìm ra bộ tham số ($w$ và $b$) sao cho **Hàm mất mát (Loss Function)** đạt giá trị nhỏ nhất.
+Dưới đây là phân tích chi tiết về "bộ ba" giúp mô hình học tập hiệu quả: **Gradient Descent, Adam và Learning Rate Schedule.**
+
+## **1. Gradient Descent: "Xương sống" của sự tối ưu**
+
+![image.png](From%20ML%20DL%20to%20LLM%20Series%20-%20Part%201%20Machine%20Learning/image.png)
+
+Hãy tưởng tượng bạn đang đứng trên đỉnh một thung lũng mù sương và muốn xuống đáy (nơi Loss thấp nhất). Vì không thấy đường, bạn phải dùng chân để cảm nhận **độ dốc (Gradient)** ngay tại vị trí mình đứng.
+• **Cơ chế:** Tính đạo hàm của hàm mất mát theo từng tham số. Đạo hàm cho ta biết hướng tăng nhanh nhất, vì vậy ta đi ngược lại hướng đó để giảm Loss.
+• **Hạn chế:** Nếu chỉ dùng Gradient Descent thuần túy (Vanilla GD), mô hình rất dễ bị kẹt ở **Local Minimum** (cực tiểu địa phương) hoặc mất quá nhiều thời gian để vượt qua các vùng **Saddle Point** (điểm yên ngựa).
+
+## **2. Adam (Adaptive Moment Estimation): Trình tối ưu hóa "thông minh"**
+
+![image.png](From%20ML%20DL%20to%20LLM%20Series%20-%20Part%201%20Machine%20Learning/image%201.png)
+
+Adam hiện là Optimizer phổ biến nhất vì nó kết hợp ưu điểm của hai phương pháp khác là **Momentum** và **RMSProp**.
+• **Momentum (Đà):** Giúp bộ tối ưu "lấy đà" để vượt qua các vùng bằng phẳng hoặc cực tiểu địa phương. Nếu các bước trước đó đều đi cùng một hướng, Adam sẽ đẩy nhanh tốc độ ở hướng đó.
+• **Adaptive (Thích nghi):** Adam điều chỉnh Learning Rate riêng biệt cho từng tham số. Những tham số thường xuyên thay đổi sẽ có LR nhỏ lại, trong khi những tham số ít thay đổi sẽ có LR lớn hơn để "đuổi kịp".
+• **Tại sao nên dùng?** Adam cực kỳ mạnh mẽ, ít cần tinh chỉnh thủ công và hội tụ (converge) rất nhanh trong hầu hết các bài toán Deep Learning.
+
+## **3. Learning Rate Schedule: Chiến thuật "điều phối" tốc độ**
+
+![image.png](From%20ML%20DL%20to%20LLM%20Series%20-%20Part%201%20Machine%20Learning/image%202.png)
+
+Nếu **Learning Rate (LR)** là độ dài của mỗi bước chân, thì **LR Schedule** là kế hoạch thay đổi độ dài bước chân đó theo thời gian.
+• **Vấn đề:**
+    ◦ LR quá lớn: Bạn sẽ bước quá xa và nhảy qua khỏi đáy thung lũng (**Overshooting**).
+    ◦ LR quá nhỏ: Bạn đi quá chậm, có khi mất cả đời mới xuống tới đáy.
+• **Các chiến thuật phổ biến:**
+    ◦ **Step Decay:** Cứ sau một số lượng Epoch nhất định, ta giảm LR đi một nửa (hoặc theo tỉ lệ $k$).
+    ◦ **Exponential Decay:** Giảm LR theo hàm mũ, tốc độ giảm mượt mà hơn.
+    ◦ **Cosine Annealing:** Giảm LR theo hình sóng Cosine, giúp mô hình thăm dò kỹ lưỡng ở giai đoạn cuối.
+    ◦ **Warm-up:** Bắt đầu với LR rất nhỏ để mô hình ổn định, sau đó mới tăng dần lên trước khi bắt đầu giảm.
+
+**Bảng so sánh nhanh**
+
+| **Thành phần** | **Vai trò chính** | **Thuật ngữ chuyên ngành** |
+| --- | --- | --- |
+| **Gradient Descent** | Tìm hướng đi | *Direction, Partial Derivative, Convergence* |
+| **Adam** | Tối ưu hóa tốc độ và độ chính xác | *Momentum, Second Moment, Adaptive Learning Rate* |
+| **LR Schedule** | Điều chỉnh bước đi theo thời gian | *Decay, Warm-up, Learning Rate Policy* |
+
+**Tóm lại**
+Để một mô hình Deep Learning đạt hiệu suất cao nhất:
+1. Bạn dùng **Gradient Descent** làm nguyên lý cơ bản.
+2. Bạn chọn **Adam** làm "người dẫn đường" vì nó có khả năng tự thích nghi tốt.
+3. Bạn áp dụng thêm **Learning Rate Schedule** (như Cosine Annealing) để đảm bảo ở giai đoạn cuối, mô hình sẽ hội tụ một cách mịn màng nhất vào điểm tối ưu toàn cục.
+
+# III. Loss functions (Cross entropy, KL-divergence)
+
+**Loss Function (Hàm mất mát)** chính là "thước đo sai số". Nó đóng vai trò là kim chỉ nam để Optimizer (như Adam hay Gradient Descent) biết cần phải điều chỉnh bộ tham số theo hướng nào.
+Dưới đây là phân tích về hai loại Loss Function cực kỳ quan trọng trong bài toán phân loại và xác suất: **Cross-Entropy** và **KL-Divergence**.
+
+## **1. Cross-Entropy (Hàm mất mát entropy chéo)**
+
+Đây là "tiêu chuẩn vàng" cho các bài toán **Classification (Phân loại)**. Khi bạn muốn mô hình đoán xem một tấm ảnh là mèo, chó hay chim, bạn dùng Cross-Entropy.
+• **Cơ chế:** Nó đo lường sự khác biệt giữa hai xác suất: Xác suất dự báo từ mô hình (**Predicted Probability**) và xác suất thực tế (**Ground Truth - thường là One-hot vector**).
+• **Công thức (cho bài toán đa lớp):**
+
+$L = -\sum_{i=1}^{C} y_i \log(\hat{y}_i)$
+
+*Trong đó: $y_i$ là nhãn thật (thường là 0 hoặc 1), $\hat{y}_i$ là xác suất mô hình dự đoán (đầu ra của hàm Softmax).*
+• **Tại sao nó hiệu quả?**
+    ◦ **Penalty (Hình phạt):** Nếu mô hình cực kỳ tự tin vào một đáp án sai (ví dụ dự đoán 99% là chó nhưng thực tế là mèo), hàm $\log$ sẽ tạo ra một giá trị Loss cực lớn, buộc mô hình phải sửa sai ngay lập tức.
+    ◦ **Sự kết hợp hoàn hảo:** Khi dùng với hàm **Softmax**, Cross-Entropy giúp việc tính đạo hàm trở nên rất mượt mà, giúp quá trình **Backpropagation** (lan truyền ngược) diễn ra nhanh hơn.
+
+![image.png](From%20ML%20DL%20to%20LLM%20Series%20-%20Part%201%20Machine%20Learning/image%203.png)
+
+## **2. KL-Divergence (Kullback–Leibler Divergence)**
+
+![image.png](From%20ML%20DL%20to%20LLM%20Series%20-%20Part%201%20Machine%20Learning/image%204.png)
+
+Nếu Cross-Entropy thường dùng trong phân loại, thì KL-Divergence (hay còn gọi là **Relative Entropy**) lại được dùng để so sánh hai **Phân phối xác suất (Probability Distributions)**.
+• **Cơ chế:** Nó đo lường lượng thông tin bị mất đi khi chúng ta dùng phân phối $Q$ (dự đoán) để xấp xỉ phân phối $P$ (thực tế).
+• **Công thức:**
+
+$D_{KL}(P \parallel Q) = \sum_{x \in X} P(x) \log\left(\frac{P(x)}{Q(x)}\right)$
+
+• **Đặc điểm chuyên ngành quan trọng:**
+    ◦ **Non-symmetric (Bất đối xứng):** Khoảng cách từ $P$ đến $Q$ không giống từ $Q$ đến $P$ ($D_{KL}(P \parallel Q) \neq D_{KL}(Q \parallel P)$). Do đó, nó không được coi là một "khoảng cách" (distance) thuần túy theo nghĩa toán học mà là một sự "sai khác" (divergence).
+    ◦ **Ứng dụng:** Thường xuất hiện trong các mô hình tạo sinh như **VAE (Variational Autoencoders)** hoặc khi làm **Knowledge Distillation** (chuyển giao tri thức từ mô hình lớn sang mô hình nhỏ).
+
+## 3. Mối quan hệ "mật thiết" giữa Cross-Entropy và KL-Divergence
+
+Trong toán học, chúng ta có một biểu thức cực kỳ thú vị kết nối hai khái niệm này:
+
+$\text{Cross-Entropy} = \text{Entropy} + \text{KL-Divergence}$
+
+$H(P, Q) = H(P) + D_{KL}(P \parallel Q)$
+
+**Giải thích dễ hiểu:**
+• **$H(P)$ (Entropy):** Là độ nhiễu nội tại của dữ liệu gốc. Trong hầu hết các bài toán Deep Learning, dữ liệu gốc là cố định, nên $H(P)$ là một hằng số.
+• **Vì vậy:** Việc tối ưu hóa (giảm) Cross-Entropy cũng chính là việc tối ưu hóa (giảm) KL-Divergence. Đó là lý do tại sao trong bài toán phân loại nhãn cứng, chúng ta gọi là Cross-Entropy cho gọn, nhưng bản chất vẫn là đang thu hẹp khoảng cách KL giữa hai phân phối.
+
+| **Đặc điểm** | **Cross-Entropy** | **KL-Divergence** |
+| --- | --- | --- |
+| **Mục đích chính** | Tối ưu hóa mô hình phân loại. | So sánh độ tương đồng giữa 2 phân phối. |
+| **Đầu ra mong muốn** | Một nhãn cụ thể (Mèo, Chó, ...). | Một phân phối xác suất (phân phối chuẩn, v.v.). |
+| **Đặc điểm** | Phạt nặng các dự đoán sai nhưng tự tin. | Đo lường "thông tin bị mất" khi xấp xỉ. |
+| **Ứng dụng** | CNN, Transformer (Classification). | VAE, GAN, Học tăng cường (Reinforcement Learning). |
+
+# IV. Neural Network cho NLP
+
+## 1. Word Embedding: Word2Vec, GloVe
+
+Để máy tính có thể hiểu được ngôn ngữ tự nhiên (NLP), chúng ta không thể ném cho nó những ký tự văn bản thuần túy. Chúng ta cần chuyển đổi từ ngữ thành những con số, cụ thể là các **Vector**.
+
+Dưới đây là phân tích về **Word Embedding** – kỹ thuật "nhúng" ngôn ngữ vào không gian toán học thông qua hai đại diện lừng lẫy: **Word2Vec** và **GloVe**.
+
+### a. Word Embedding là gì?
+
+Trước đây, chúng ta dùng **One-hot Encoding** (ví dụ: từ "Vua" là `[1, 0, 0, ...]`). Cách này rất lãng phí bộ nhớ và không cho thấy mối liên hệ nào giữa các từ.
+
+**Word Embedding** giải quyết điều này bằng cách biểu diễn mỗi từ dưới dạng một **Dense Vector** (vector dày đặc) với kích thước cố định (ví dụ: 100 hoặc 300 chiều). Trong không gian này, các từ có ý nghĩa tương đồng sẽ đứng gần nhau.
+
+### **2. Word2Vec (Dự báo dựa trên ngữ cảnh)**
+
+Được phát triển bởi Google, Word2Vec học ý nghĩa của từ thông qua việc **dự đoán**. Nó hoạt động dựa trên giả thuyết: "Các từ xuất hiện trong cùng một ngữ cảnh thường có ý nghĩa tương đương".
+Word2Vec có hai kiến trúc chính:
+• **CBOW (Continuous Bag of Words):** Dùng các từ xung quanh (**Context words**) để dự đoán từ ở giữa (**Target word**). Phù hợp với các tập dữ liệu nhỏ.
+• **Skip-gram:** Ngược lại với CBOW, dùng một từ ở giữa để dự đoán các từ xung quanh. Skip-gram hoạt động cực tốt với các tập dữ liệu lớn và học được cả những từ hiếm (**Rare words**).
+
+**Điểm đặc biệt:** Word2Vec tạo ra khả năng **Số học Vector (Vector Arithmetic)** kinh điển:
+
+$\vec{V}_{King} - \vec{V}_{Man} + \vec{V}_{Woman} \approx \vec{V}_{Queen}$
+
+### **3. GloVe (Global Vectors for Word Representation)**
+
+Được phát triển bởi Stanford, GloVe không dùng mô hình dự báo như Word2Vec mà dựa trên **Thống kê toàn cục (Global Statistics)**.
+• **Cơ chế:** GloVe xây dựng một **Ma trận đồng xuất hiện (Co-occurrence Matrix)** khổng lồ cho toàn bộ tập dữ liệu (**Corpus**). Ma trận này ghi lại số lần từ $A$ và từ $B$ đứng cạnh nhau.
+• **Mục tiêu:** GloVe tối ưu hóa sao cho tích vô hướng của hai vector từ bằng với logarit của xác suất đồng xuất hiện của chúng.
+• **Ưu điểm:** Vì nhìn vào toàn bộ kho văn bản (Global context) thay vì chỉ nhìn vào một cửa sổ trượt nhỏ (Local window) như Word2Vec, GloVe nắm bắt thông tin ngữ nghĩa rất vững chắc.
+
+| **Đặc điểm** | **Word2Vec** | **GloVe** |
+| --- | --- | --- |
+| **Phương pháp** | Predictive (Dự báo) | Count-based (Thống kê) |
+| **Cơ chế học** | Dùng Neural Network nông (1 lớp ẩn) | Phân tích ma trận đồng xuất hiện |
+| **Phạm vi nhìn** | **Local context** (Cửa sổ trượt quanh từ) | **Global context** (Toàn bộ kho văn bản) |
+| **Điểm mạnh** | Học tốt các mối quan hệ ngữ pháp, từ hiếm | Ổn định, học tốt các mối quan hệ ngữ nghĩa tổng quát |
+| **Tốc độ huấn luyện** | Chậm hơn (nếu dữ liệu cực lớn) | Nhanh hơn trên các tập dữ liệu khổng lồ |

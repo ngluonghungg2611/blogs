@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Next.js build output
+.next
+out
+
+# Environment files — secrets must not enter the image
+.env
+.env.local
+.env*.local
+
+# Version control
+.git
+.gitignore
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+.vscode
+.idea
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Next.js 14 does not support .ts config — use next.config.mjs inside Docker
+next.config.ts
+
+# Misc
+README.md
+*.md
+coverage
+.nyc_output
