@@ -139,7 +139,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Footer */}
             <div className="mt-12 pt-8 border-t border-border space-y-6">
-              <ShareButtons title={post.title} slug={post.slug} />
+              <ShareButtons title={post.title} url={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug}`} />
               <AuthorCard
                 author={post.author}
                 authorTitle={post.authorTitle}

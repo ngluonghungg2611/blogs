@@ -1,4 +1,15 @@
-blogs
+'use client'
+
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
+
+interface ShareButtonsProps {
+  url: string
+  title: string
+}
+
+export function ShareButtons({ url, title }: ShareButtonsProps) {
+  const [copied, setCopied] = useState(false)
   const encodedUrl = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
 
