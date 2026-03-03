@@ -223,7 +223,7 @@ Trong ảnh trên là ma trận $W_Q, W_K, W_V$ là các hệ số mà mô hình
 
 Mỗi quá trình như vậy được gọi là 1 head của attention. Khi lặp lại quá trình này nhiều lần (trong bài báo là 3 heads) ta sẽ thu được quá trình Multi-head Attention như biến đổi bên dưới:
 
-![Untitled.png](Attention%20v%C3%A0%20s%E1%BB%B1%20h%C3%ACnh%20th%C3%A0nh%20c%E1%BB%A7a%20m%C3%B4%20h%C3%ACnh%20Transformer/Untitled.png)
+![Untitled.png](https://vnptai.io/storage/thumbnail/multi-head-attention-la-gi.jpg)
 
 Để trả về output có cùng kích thước với ma trận input chúng ta chỉ cần nhân với ma trận $W_0$ để chiều rộng bằng với chiều rộng của ma trận input.
 
@@ -332,7 +332,7 @@ Mỗi time-step sẽ nhập input tương ứng nên có ở thời điểm đó
 
 Khởi tạo khối mã hóa vị trí các input embedding. Mã hóa dựa trên các hàm sin và cô-son với các frequencies khác nhau. Các frequencies này được xác định bởi một hệ số, hệ số này được tính toán dựa trên vị trí trong chuỗi và các parameter đã học.
 
-![transformer-positional-embeddings.png](Attention%20v%C3%A0%20s%E1%BB%B1%20h%C3%ACnh%20th%C3%A0nh%20c%E1%BB%A7a%20m%C3%B4%20h%C3%ACnh%20Transformer/transformer-positional-embeddings.png)
+![transformer-positional-embeddings.png](https://media.geeksforgeeks.org/wp-content/uploads/20250818131508982635/positional_encoding_in_transformer.webp)
 
 ```python
 class PositionalEncoding(nn.Module):
@@ -360,7 +360,7 @@ class PositionalEncoding(nn.Module):
 
 ### 5.2. Xây dựng khối Encoder
 
-![encoder-layer-norm.png](Attention%20v%C3%A0%20s%E1%BB%B1%20h%C3%ACnh%20th%C3%A0nh%20c%E1%BB%A7a%20m%C3%B4%20h%C3%ACnh%20Transformer/encoder-layer-norm.png)
+![encoder-layer-norm.png](https://sanjayasubedi.com.np/assets/images/deep-learning/transformer-encoder/encoder.png)
 
 Ở phần này chúng ta cùng đi khởi tạo khối encoder bằng các layers được cung cấp bởi thư viện Pytorch: MultiheadAttention, LayerNorm, Sequential, Linear, ReLU, Linear.
 
@@ -399,7 +399,7 @@ class EncoderLayer(nn.Module):
 Trong mô hình Transformer, decoder có vai trò tạo chuỗi đầu ra dựa trên chuỗi đầu và đã được encode. Decoder tương tự như Encoder, gồm nhiều lớp self-attention và feed-forward networks.
 Bộ giải mã lấy đầu vào là một chuỗi embedding, được đưa qua các lớp self-attention để cho phép decoder tham gia vào các phần khác nhau của chuỗi đầu vào. Sau đó, decoder sẽ lấy các đầu ra của ecoder bằng cơ chế muilti-head attention. Đầu ra của cơ chế attetion này được concate với đầu vào của decoder và được cung cấp thông qua Feed-forward networks. Quá trình này được lặp lại cho mỗi token trong chuỗi đầu ra.
 
-![decoder-source-target-2.png](Attention%20v%C3%A0%20s%E1%BB%B1%20h%C3%ACnh%20th%C3%A0nh%20c%E1%BB%A7a%20m%C3%B4%20h%C3%ACnh%20Transformer/decoder-source-target-2.png)
+![decoder-source-target-2.png](https://miro.medium.com/v2/resize:fit:1400/0*vMWwPCVAbvcSQn6L)
 
 ```python
 class DecoderLayer(nn.Module):
