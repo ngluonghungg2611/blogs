@@ -138,6 +138,9 @@ export default function AboutPage() {
             Worked with clients across retail, e-commerce, manufacturing, and recruitment sectors.
           </p>
           <p>
+            As a Team Leader, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
+          </p>
+          <p>
             Skilled in designing microservices, logging/monitoring, and mentoring teams. Seeking a dynamic environment to
             contribute to innovative AI projects, while growing alongside the organization.
           </p>
@@ -185,6 +188,7 @@ export default function AboutPage() {
             </div>
             <p className="text-sm font-medium text-blue-500 dark:text-blue-400 mb-3">AI Engineer</p>
             <BulletList items={[
+              'Team Leader on projects — led scoping, estimation, and collaborated closely with clients',
               'Researched and implemented advanced AI techniques: RAG, GraphRAG, AgenticRAG',
               'Developed and integrated chatbots (e.g., on Slack), enhancing real-time communication and automation',
               'Designed and implemented microservices architecture ensuring scalability, maintainability, and efficiency',
@@ -192,7 +196,6 @@ export default function AboutPage() {
               'Built and managed databases for data storage, retrieval, and synchronization across systems',
               'Implemented logging and monitoring systems to track performance, errors, and system health',
               'Mentored new members, providing technical guidance and career support',
-              'Team Leader on projects — led scoping, estimation, and collaborated closely with clients',
             ]} />
             <div className="mt-3 flex flex-wrap gap-1.5">
               {['LangGraph', 'MCP / FastMCP', 'Cypher', 'PostgresCheckpointSaver', 'Graphity', 'FastAPI', 'Docker', 'K8S', 'Minio', 'Hybrid Search', 'Reciprocal Rank Fusion', 'Long/Short-term Memory', 'Design Pattern', 'Strategy', 'Factory'].map((t) => (
@@ -242,12 +245,64 @@ export default function AboutPage() {
             </div>
             <div className="space-y-4">
               {[
-                { name: 'Chat with Database', role: 'Team Leader', team: '6 AIE', desc: 'Natural language interface to query and retrieve information from structured databases.' },
-                { name: 'E-commerce Chatbot', role: 'Team Leader', team: '4 AIE', desc: 'Chatbot that recommends potential products to users based on their preferences and behavior.' },
-                { name: 'Internal Knowledge Chatbot', role: 'Task Leader', team: '10 AIE', desc: 'Internal chatbot leveraging company documents as a knowledge base for employee Q&A.' },
-                { name: 'Document Information Extraction', role: 'Member', team: '3 AIE', desc: 'Automated extraction of structured information from various document types.' },
-                { name: 'Multi-type Document Translation', role: 'Member', team: '5 AIE', desc: 'Translation pipeline supporting multiple document formats with layout preservation.' },
-                { name: 'Ad Image Information Extraction', role: 'Member', team: '10 members', desc: 'Extract structured information from advertising images for downstream analytics.' },
+                {
+                  name: 'Chat with Database', role: 'Team Leader', team: '7 AIE',
+                  desc: 'Developed a natural language interface for querying structured databases, enabling non-technical users to retrieve insights using conversational queries.',
+                  bullets: [
+                    'Designed NL2SQL pipeline using LLMs to convert natural language queries into optimized SQL queries.',
+                    'Implemented schema-aware prompting and context retrieval to improve query accuracy.',
+                    'Built query validation and error-correction mechanisms to reduce hallucinated SQL queries.',
+                    'Integrated the system with PostgreSQL databases and internal analytics tools.',
+                    'Led architecture design, task allocation, and technical mentoring for the team.',
+                  ],
+                },
+                { 
+                  name: 'E-commerce Chatbot', role: 'Team Leader', team: '5 AIE', 
+                  desc: 'Developed an AI-powered chatbot for e-commerce platforms that assists users in discovering and recommending products based on their needs and preferences.' ,
+                  bullets: [
+                    'Designed product recommendation workflows using conversational AI.',
+                    'Integrated product catalog search and semantic retrieval for better matching of user intent.',
+                    'Implemented context-aware dialogue management to refine recommendations across turns.',
+                    'Built a user intent classification system for product search, comparison, and purchase assistance.',
+                    'Coordinated development and ensured system scalability for real-time interactions.',
+                  ]
+                },
+                { name: 'Internal Knowledge Chatbot', role: 'Team Leader', team: '5 AIE', 
+                  desc: 'Developed an enterprise knowledge chatbot that enables employees to query internal documents and knowledge bases through natural language.',
+                  bullets: [
+                    'Built a RAG (Retrieval-Augmented Generation) pipeline to retrieve relevant internal documents.',
+                    'Implemented document ingestion pipelines supporting multiple formats (PDF, DOCX, EXCEL, PPTX).',
+                    'Designed chunking and embedding strategies to improve retrieval quality.',
+                    'Developed evaluation pipelines to measure response accuracy and knowledge coverage.',
+                    'Led a sub-team responsible for the retrieval and indexing architecture.',
+                  ] 
+                },
+                { name: 'Document Information Extraction', role: 'Member', team: '3 AIE', 
+                  desc: 'Developed a system to automatically extract structured information from various document types such as invoices, forms, and reports.',
+                  bullets: [
+                    'Implemented OCR pipelines to convert scanned documents into machine-readable text.',
+                    'Designed information extraction models to identify key fields such as names, dates, IDs, and financial values.',
+                    'Built post-processing logic for normalization and validation of extracted data.',
+                    'Supported integration with downstream business systems.',
+                  ]
+                },
+                { name: 'Multi-type Document Translation', role: 'Member', team: '5 AIE', 
+                  desc: 'Developed a document translation pipeline supporting multiple formats while preserving layout and structure.',
+                  bullets: [
+                    'Built preprocessing pipelines for PDF, DOCX, PPT, and HTML documents.',
+                    'Implemented segmentation and alignment strategies to maintain document structure.',
+                    'Integrated machine translation models for multilingual support.',
+                    'Developed post-processing steps to restore original formatting and layout.',
+                  ]
+                },
+                { name: 'Ad Image Information Extraction', role: 'Member', team: '10 members', 
+                  desc: 'Extract structured information from advertising images for downstream analytics.',
+                  bullets: [
+                    'Implemented layout analysis to identify key sections such as brand names, promotions, and pricing.',
+                    'Structured extracted data for downstream analytics and reporting systems.',
+                    'Evaluated the ads image based on policy compliance and content quality metrics.',
+                  ]
+                },
               ].map((p) => (
                 <div key={p.name} className="pl-4 border-l-2 border-border">
                   <div className="flex flex-wrap items-baseline gap-2 mb-1">
@@ -256,6 +311,16 @@ export default function AboutPage() {
                     <span className="text-xs text-muted-foreground">· team: {p.team}</span>
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                  {'bullets' in p && p.bullets && (
+                    <ul className="mt-2 space-y-1">
+                      {(p.bullets as string[]).map((b) => (
+                        <li key={b} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
+                          <span className="mt-1.5 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>
@@ -271,7 +336,7 @@ export default function AboutPage() {
                 { name: 'LLM Inference Service', role: 'Developer', team: null, desc: 'Researched and deployed LLM inference service for internal usage.' },
                 { name: 'AI-OCR — Car Inspection Certificate', role: 'Developer', team: '13', desc: 'Extract structured information from car inspection certificates with skew correction and field segmentation.' },
                 { name: 'Retail Customer Tracking & Auto Payment', role: 'Developer', team: '10', desc: 'Multi-object tracking for retail customers with automatic payment on Rockchip edge devices.' },
-                { name: 'Auto-Training Pipeline (Retail)', role: 'Developer', team: '5', desc: 'Triggered retraining with YOLOv5/v8 when new objects are detected in retail environments, reducing manual effort ~60%.' },
+                { name: 'Auto-Training Pipeline (Retail)', role: 'Developer', team: '5', desc: 'Triggered retraining with YOLOv5/v8 + CLIP when new objects are detected in retail environments, reducing manual effort ~60%.' },
                 { name: 'Billboard Audience Analytics', role: 'Developer', team: '15', desc: 'Age, gender, and dwell-time estimation for marketing insights deployed on edge hardware.' },
                 { name: 'Japanese Driving License OCR', role: 'Developer', team: '15', desc: 'Key-field extraction using PaddleOCR with custom post-processing, deployed as a REST API.' },
                 { name: 'eKYC Identity Verification', role: 'Developer', team: null, desc: 'Identity verification pipeline combining face detection, liveness detection, and ID card OCR.' },
