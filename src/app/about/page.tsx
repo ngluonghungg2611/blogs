@@ -249,7 +249,7 @@ export default function AboutPage() {
                   name: 'Chat with Database', role: 'Team Leader', team: '7 AIE',
                   desc: 'Developed a natural language interface for querying structured databases, enabling non-technical users to retrieve insights using conversational queries.',
                   bullets: [
-                    'Designed NL2SQL pipeline using LLMs to convert natural language queries into optimized SQL queries.',
+                    'Designed Text2SQL / Text2GraphQL pipeline using LLMs to convert natural language queries into optimized SQL queries.',
                     'Implemented schema-aware prompting and context retrieval to improve query accuracy.',
                     'Built query validation and error-correction mechanisms to reduce hallucinated SQL queries.',
                     'Integrated the system with PostgreSQL databases and internal analytics tools.',
