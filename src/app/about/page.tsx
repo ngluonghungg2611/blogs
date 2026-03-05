@@ -138,7 +138,7 @@ export default function AboutPage() {
             Worked with clients across retail, e-commerce, manufacturing, and recruitment sectors.
           </p>
           <p>
-            As a Team Leader, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
+            As a <strong className="text-foreground">Team Leader</strong>, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
           </p>
           <p>
             Skilled in designing microservices, logging/monitoring, and mentoring teams. Seeking a dynamic environment to
