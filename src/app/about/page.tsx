@@ -38,7 +38,7 @@ const skillGroups = [
   },
   {
     label: 'Infrastructure',
-    items: ['Docker', 'Docker Compose', 'Kubernetes (K8S)', 'Git', 'Triton Inference Server'],
+    items: ['Kubernetes (K8S)', 'Triton Inference Server', 'vLLM', 'TensorRT', 'TensorRT LLM','Prometheus', 'Grafana'],
   },
   {
     label: 'Cloud / Third-party',
@@ -60,7 +60,7 @@ const skillGroups = [
 
 const certifications = [
   { year: '2023', name: 'Machine Learning Specialization', detail: 'Coursera / DeepLearning.AI' },
-  { year: '2024', name: 'Neo4j Certified Professional', detail: 'Graph Database design and Cypher query language' },
+  { year: '2025', name: 'Neo4j Certified Professional', detail: 'Graph Database design and Cypher query language' },
 ]
 
 const blogSeries = [
@@ -190,6 +190,7 @@ export default function AboutPage() {
             <BulletList items={[
               'Team Leader on projects — led scoping, estimation, and collaborated closely with clients',
               'Researched and implemented advanced AI techniques: RAG, GraphRAG, AgenticRAG',
+              'Experience fine-tuning and deploying open-source LLMs (LLaMA, Mistral, Qwen) using instruction tuning and LoRA/PEFT for domain-specific AI applications.',
               'Developed and integrated chatbots (e.g., on Slack), enhancing real-time communication and automation',
               'Designed and implemented microservices architecture ensuring scalability, maintainability, and efficiency',
               'Used Kubernetes (K8S) to deploy projects to production-ready environments',
