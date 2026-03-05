@@ -138,7 +138,8 @@ export default function AboutPage() {
             Worked with clients across retail, e-commerce, manufacturing, and recruitment sectors.
           </p>
           <p>
-            As a <strong className="text-foreground">Team Leader</strong>, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
+            As a <strong className="text-foreground">Team Leader</strong>, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. 
+            I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
           </p>
           <p>
             Skilled in designing microservices, logging/monitoring, and mentoring teams. Seeking a dynamic environment to
@@ -147,31 +148,8 @@ export default function AboutPage() {
           <p>
             In the future, I aspire to gain international experience and achieve higher professional goals. Collaboration and
             mutual growth are key to creating meaningful success.
-          </p>
-        </div>
-      </div>
 
-      {/* ── Skills ── */}
-      <div className="mb-14">
-        <SectionTitle>Skills</SectionTitle>
-        <div className="space-y-4">
-          {skillGroups.map((group) => (
-            <div key={group.label} className="flex flex-col sm:flex-row sm:gap-4">
-              <span className="text-xs font-semibold text-muted-foreground w-40 shrink-0 pt-0.5 mb-1 sm:mb-0">
-                {group.label}
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="text-xs px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+          </p>
         </div>
       </div>
 
@@ -219,6 +197,7 @@ export default function AboutPage() {
               'Fine-tuned models on specific domains (PaddleOCR, detection models)',
               'Defined monitoring flows for model performance in production',
               'Built Python packages for C++ inference via Pybind',
+              'Optimized model inference pipelines using TensorRT and Triton Inference Server',
               'Implemented multi-model management and deployment pipelines',
               'Shared knowledge and mentored team members',
             ]} />
@@ -231,6 +210,30 @@ export default function AboutPage() {
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* ── Skills ── */}
+      <div className="mb-14">
+        <SectionTitle>Skills</SectionTitle>
+        <div className="space-y-4">
+          {skillGroups.map((group) => (
+            <div key={group.label} className="flex flex-col sm:flex-row sm:gap-4">
+              <span className="text-xs font-semibold text-muted-foreground w-40 shrink-0 pt-0.5 mb-1 sm:mb-0">
+                {group.label}
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <span
+                    key={item}
+                    className="text-xs px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
