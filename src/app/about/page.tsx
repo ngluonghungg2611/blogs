@@ -277,7 +277,7 @@ export default function AboutPage() {
                     'Led a sub-team responsible for the retrieval and indexing architecture.',
                   ] 
                 },
-                { name: 'Document Information Extraction', role: 'Member', team: '3 AIE', 
+                { name: 'Document Information Extraction', role: 'AI Engineer', team: '3 AIE', 
                   desc: 'Developed a system to automatically extract structured information from various document types such as invoices, forms, and reports.',
                   bullets: [
                     'Implemented OCR pipelines to convert scanned documents into machine-readable text.',
@@ -286,7 +286,7 @@ export default function AboutPage() {
                     'Supported integration with downstream business systems.',
                   ]
                 },
-                { name: 'Multi-type Document Translation', role: 'Member', team: '5 AIE', 
+                { name: 'Multi-type Document Translation', role: 'AI Engineer', team: '5 AIE', 
                   desc: 'Developed a document translation pipeline supporting multiple formats while preserving layout and structure.',
                   bullets: [
                     'Built preprocessing pipelines for PDF, DOCX, PPT, and HTML documents.',
@@ -295,7 +295,7 @@ export default function AboutPage() {
                     'Developed post-processing steps to restore original formatting and layout.',
                   ]
                 },
-                { name: 'Ad Image Information Extraction', role: 'Member', team: '10 members', 
+                { name: 'Ad Image Information Extraction', role: 'AI Engineer', team: '10 members', 
                   desc: 'Extract structured information from advertising images for downstream analytics.',
                   bullets: [
                     'Implemented layout analysis to identify key sections such as brand names, promotions, and pricing.',
@@ -333,13 +333,13 @@ export default function AboutPage() {
             </div>
             <div className="space-y-4">
               {[
-                { name: 'LLM Inference Service', role: 'Developer', team: null, desc: 'Researched and deployed LLM inference service for internal usage.' },
-                { name: 'AI-OCR — Car Inspection Certificate', role: 'Developer', team: '13', desc: 'Extract structured information from car inspection certificates with skew correction and field segmentation.' },
-                { name: 'Retail Customer Tracking & Auto Payment', role: 'Developer', team: '10', desc: 'Multi-object tracking for retail customers with automatic payment on Rockchip edge devices.' },
-                { name: 'Auto-Training Pipeline (Retail)', role: 'Developer', team: '5', desc: 'Triggered retraining with YOLOv5/v8 + CLIP when new objects are detected in retail environments, reducing manual effort ~60%.' },
-                { name: 'Billboard Audience Analytics', role: 'Developer', team: '15', desc: 'Age, gender, and dwell-time estimation for marketing insights deployed on edge hardware.' },
-                { name: 'Japanese Driving License OCR', role: 'Developer', team: '15', desc: 'Key-field extraction using PaddleOCR with custom post-processing, deployed as a REST API.' },
-                { name: 'eKYC Identity Verification', role: 'Developer', team: null, desc: 'Identity verification pipeline combining face detection, liveness detection, and ID card OCR.' },
+                { name: 'LLM Inference Service', role: 'AI Engineer', team: null, desc: 'Researched and deployed an internal LLM inference service with multi-model management, monitoring, and scalable API integration for chatbot and AI applications.' },
+                { name: 'AI-OCR — Car Inspection Certificate', role: 'AI Engineer', team: '13', desc: 'Developed an OCR pipeline to extract structured information from car inspection certificates, including skew correction, field segmentation, and domain fine-tuning of PaddleOCR models.' },
+                { name: 'Retail Customer Tracking & Auto Payment', role: 'AI Engineer', team: '10', desc: 'Implemented multi-object tracking and customer behavior analysis for automatic payment systems deployed on Rockchip edge devices with optimized AI inference.' },
+                { name: 'Auto-Training Pipeline (Retail)', role: 'AI Engineer', team: '5', desc: 'Built an automated training pipeline using YOLOv5/v8 and CLIP to detect new retail objects and trigger model retraining, reducing manual dataset preparation by ~60%.' },
+                { name: 'Billboard Audience Analytics', role: 'AI Engineer', team: '15', desc: 'Developed edge-based analytics to estimate audience age, gender, and dwell time using computer vision models, enabling real-time marketing insights.' },
+                { name: 'Japanese Driving License OCR', role: 'AI Engineer', team: '15', desc: 'Built a key-field extraction system for Japanese driving licenses using PaddleOCR with domain-specific fine-tuning and custom post-processing, deployed as a REST API service.' },
+                { name: 'eKYC Identity Verification', role: 'AI Engineer', team: null, desc: 'Implemented an identity verification pipeline combining face detection, liveness detection, and ID card OCR with optimized inference and monitoring for production systems.' },
               ].map((p) => (
                 <div key={p.name} className="pl-4 border-l-2 border-border">
                   <div className="flex flex-wrap items-baseline gap-2 mb-1">
