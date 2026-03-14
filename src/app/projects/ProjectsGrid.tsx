@@ -888,20 +888,6 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
           </svg>
         </button>
 
-        {/* Cover image (if available) */}
-        {project.coverImage && (
-          <div className="relative w-full h-52 overflow-hidden rounded-t-2xl">
-            <Image
-              src={project.coverImage}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 672px"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          </div>
-        )}
-
         {/* Interactive preview */}
         <div className="p-5 pb-0 bg-gradient-to-b from-blue-50/60 dark:from-blue-950/20 to-transparent">
           <ProjectPreview type={project.preview} />
