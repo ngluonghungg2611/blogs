@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 
 /* ── Types ────────────────────────────────────────── */
 interface TechBadge { label: string; color: string }
@@ -28,6 +29,7 @@ interface Project {
   demoUrl?: string
   githubUrl?: string
   preview: PreviewType
+  coverImage?: string
 }
 
 /* ── Data ─────────────────────────────────────────── */
@@ -57,6 +59,7 @@ const projects: Project[] = [
       { icon: '📁', text: 'Multi-datasource support (upload CSV or connect DB)' },
     ],
     preview: 'chatbot-db',
+    coverImage: '/images/cover_projects/Chat with Database & Chart Visualisation.png',
   },
   {
     id: 2,
@@ -83,6 +86,7 @@ const projects: Project[] = [
       { icon: '💬', text: 'Slack integration for team notifications' },
     ],
     preview: 'ecommerce-chatbot',
+    coverImage: '/images/cover_projects/E-commerce Chatbot.png',
   },
   {
     id: 3,
@@ -109,6 +113,7 @@ const projects: Project[] = [
       { icon: '🔒', text: 'Role-based document access control' },
     ],
     preview: 'knowledge-chatbot',
+    coverImage: '/images/cover_projects/Internal Knowledge Chatbot.png',
   },
   {
     id: 4,
@@ -135,6 +140,7 @@ const projects: Project[] = [
       { icon: '🔗', text: 'REST API integration with downstream business systems' },
     ],
     preview: 'ai-ocr',
+    coverImage: '/images/cover_projects/AI-OCR — Car Inspection Certificate.png',
   },
   {
     id: 5,
@@ -161,6 +167,7 @@ const projects: Project[] = [
       { icon: '🔧', text: 'RKNN-optimised model for low-latency inference' },
     ],
     preview: 'retail-tracking',
+    coverImage: '/images/cover_projects/Retail Customer Tracking & Auto Payment.png',
   },
   {
     id: 6,
@@ -187,6 +194,7 @@ const projects: Project[] = [
       { icon: '⚡', text: 'Optimised inference on Rockchip edge hardware' },
     ],
     preview: 'billboard-analytics',
+    coverImage: '/images/cover_projects/Billboard Audience Analytics.png',
   },
   {
     id: 7,
@@ -214,6 +222,7 @@ const projects: Project[] = [
       { icon: '📊', text: 'Performance monitoring with latency & FPS metrics' },
     ],
     preview: 'facetracking-edge',
+    coverImage: '/images/cover_projects/Face Tracking on Edge Devices.png',
   },
 ]
 
@@ -778,32 +787,44 @@ function CompactCard({ project, onClick }: { project: Project; onClick: () => vo
                  hover:shadow-2xl hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-700
                  transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      {/* Gradient header */}
-      <div className={`relative h-40 bg-gradient-to-br ${theme.gradient} overflow-hidden flex flex-col items-center justify-center gap-3`}>
-        {/* Subtle dot-grid pattern overlay */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id={`dots-${project.id}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1.5" fill="white"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill={`url(#dots-${project.id})`}/>
-        </svg>
+      {/* Cover image / gradient header */}
+      <div className={`relative h-44 overflow-hidden ${!project.coverImage ? `bg-gradient-to-br ${theme.gradient}` : 'bg-neutral-100 dark:bg-neutral-800'}`}>
+        {project.coverImage ? (
+          <>
+            <Image
+              src={project.coverImage}
+              alt={project.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            {/* Gradient overlay so status pill is always readable */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          </>
+        ) : (
+          <>
+            {/* Dot-grid pattern for gradient fallback */}
+            <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id={`dots-${project.id}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="1.5" fill="white"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill={`url(#dots-${project.id})`}/>
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-5xl drop-shadow-lg">{theme.icon}</span>
+          </>
+        )}
 
-        {/* Icon */}
-        <span className="text-4xl drop-shadow-lg relative z-10">{theme.icon}</span>
-
-        {/* Status pill */}
-        <span className="relative z-10 text-[9px] font-semibold px-2.5 py-1 rounded-full bg-black/20 text-white border border-white/20 backdrop-blur-sm">
+        {/* Status pill — bottom-left */}
+        <span className="absolute bottom-3 left-3 z-10 text-[9px] font-semibold px-2.5 py-1 rounded-full bg-black/40 text-white border border-white/20 backdrop-blur-sm">
           {project.status}
         </span>
 
-        {/* "Click to expand" hint on hover */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-end justify-end p-3">
-          <span className="text-[8px] text-white/0 group-hover:text-white/80 transition-colors duration-200 font-medium">
-            View details →
-          </span>
-        </div>
+        {/* "View details" hint — bottom-right on hover */}
+        <span className="absolute bottom-3 right-3 z-10 text-[8px] font-medium text-white/0 group-hover:text-white/90 transition-colors duration-200">
+          View details →
+        </span>
       </div>
 
       {/* Info */}
@@ -867,7 +888,21 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
           </svg>
         </button>
 
-        {/* Preview */}
+        {/* Cover image (if available) */}
+        {project.coverImage && (
+          <div className="relative w-full h-52 overflow-hidden rounded-t-2xl">
+            <Image
+              src={project.coverImage}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 672px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          </div>
+        )}
+
+        {/* Interactive preview */}
         <div className="p-5 pb-0 bg-gradient-to-b from-blue-50/60 dark:from-blue-950/20 to-transparent">
           <ProjectPreview type={project.preview} />
         </div>
