@@ -17,8 +17,18 @@ interface ProjectFeature {
   text: string
 }
 
+type PreviewType =
+  | 'chatbot-db'
+  | 'ecommerce-chatbot'
+  | 'knowledge-chatbot'
+  | 'ai-ocr'
+  | 'retail-tracking'
+  | 'billboard-analytics'
+  | 'facetracking-edge'
+
 interface Project {
   id: number
+  company: string
   title: string
   tagline: string
   description: string
@@ -27,14 +37,15 @@ interface Project {
   features: ProjectFeature[]
   demoUrl?: string
   githubUrl?: string
-  preview: 'chatbot-db'
+  preview: PreviewType
 }
 
 /* ── Data ───────────────────────────────────────── */
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Chatbot with Database & Chart Visualisation',
+    company: 'Sun* · Team Leader · 7 AI Engineers',
+    title: 'Chat with Database & Chart Visualisation',
     tagline: 'Ask your data — get instant insights with visual charts',
     description:
       'A conversational AI assistant that translates natural-language questions into SQL queries, executes them against a relational database, and renders the results as interactive charts. Powered by an LLM + LangGraph pipeline with full conversation memory.',
@@ -57,6 +68,163 @@ const projects: Project[] = [
     ],
     preview: 'chatbot-db',
   },
+  {
+    id: 2,
+    company: 'Sun* · Team Leader · 5 AI Engineers',
+    title: 'E-commerce Chatbot',
+    tagline: 'AI shopping assistant that understands what you need',
+    description:
+      'An AI-powered chatbot for e-commerce platforms that assists users in discovering and recommending products based on their needs and preferences. Features context-aware dialogue management and semantic product retrieval.',
+    status: 'Live',
+    tech: [
+      { label: 'LangGraph', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300' },
+      { label: 'Semantic Search', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300' },
+      { label: 'PostgreSQL', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+      { label: 'FastAPI', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'Milvus', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
+      { label: 'K8S', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200' },
+    ],
+    features: [
+      { icon: '🛍️', text: 'Product recommendation via conversational AI' },
+      { icon: '🔍', text: 'Semantic catalog retrieval matching user intent' },
+      { icon: '🔁', text: 'Multi-turn context refinement across dialogue' },
+      { icon: '🎯', text: 'Intent classification: search, compare, purchase' },
+      { icon: '⚡', text: 'Real-time interactions at scale with K8S' },
+      { icon: '💬', text: 'Slack integration for team notifications' },
+    ],
+    preview: 'ecommerce-chatbot',
+  },
+  {
+    id: 3,
+    company: 'Sun* · Team Leader · 5 AI Engineers',
+    title: 'Internal Knowledge Chatbot',
+    tagline: 'Query your company knowledge base in plain English',
+    description:
+      'An enterprise knowledge chatbot enabling employees to query internal documents through natural language. Built on a RAG pipeline with hybrid search, multi-format document ingestion, and automated evaluation.',
+    status: 'Live',
+    tech: [
+      { label: 'RAG', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300' },
+      { label: 'LangGraph', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300' },
+      { label: 'Hybrid Search', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+      { label: 'Milvus', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
+      { label: 'FastAPI', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'Minio', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' },
+    ],
+    features: [
+      { icon: '📄', text: 'Multi-format ingestion: PDF, DOCX, XLSX, PPTX' },
+      { icon: '🔎', text: 'Hybrid search with Reciprocal Rank Fusion' },
+      { icon: '📐', text: 'Optimised chunking & embedding strategies' },
+      { icon: '📌', text: 'Source citations with page-level references' },
+      { icon: '📈', text: 'Automated evaluation pipeline for accuracy' },
+      { icon: '🔒', text: 'Role-based document access control' },
+    ],
+    preview: 'knowledge-chatbot',
+  },
+  {
+    id: 4,
+    company: 'VTI Corporation · AI Engineer · Team of 13',
+    title: 'AI-OCR — Car Inspection Certificate',
+    tagline: 'Automated field extraction from car inspection certificates',
+    description:
+      'An OCR pipeline to extract structured information from car inspection certificates. Includes skew correction, field segmentation, and domain-specific fine-tuning of PaddleOCR models, deployed as a production REST API.',
+    status: 'Live',
+    tech: [
+      { label: 'PaddleOCR', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+      { label: 'TensorRT', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'Triton', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300' },
+      { label: 'FastAPI', color: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200' },
+      { label: 'Fine-tuning', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+      { label: 'Docker', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300' },
+    ],
+    features: [
+      { icon: '📷', text: 'Automatic skew correction & image preprocessing' },
+      { icon: '🔲', text: 'Field segmentation for key certificate regions' },
+      { icon: '🧠', text: 'Domain fine-tuned PaddleOCR for Vietnamese text' },
+      { icon: '✅', text: 'Post-processing: normalisation & validation logic' },
+      { icon: '🚀', text: 'Triton Inference Server for high-throughput serving' },
+      { icon: '🔗', text: 'REST API integration with downstream business systems' },
+    ],
+    preview: 'ai-ocr',
+  },
+  {
+    id: 5,
+    company: 'VTI Corporation · AI Engineer · Team of 10',
+    title: 'Retail Customer Tracking & Auto Payment',
+    tagline: 'Vision-powered checkout — track customers, automate payments',
+    description:
+      'Multi-object tracking and customer behaviour analysis system for automatic payment, deployed on Rockchip edge devices. Detects product pick-ups and automatically generates payment receipts without manual checkout.',
+    status: 'Live',
+    tech: [
+      { label: 'YOLO', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
+      { label: 'MOT', color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+      { label: 'RKNN', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' },
+      { label: 'Rockchip', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300' },
+      { label: 'TensorRT', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'FastAPI', color: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200' },
+    ],
+    features: [
+      { icon: '👁️', text: 'Multi-object tracking with persistent customer IDs' },
+      { icon: '🛒', text: 'Product pick-up & put-back detection' },
+      { icon: '💳', text: 'Automatic payment receipt generation' },
+      { icon: '⚡', text: 'Real-time inference on Rockchip edge devices' },
+      { icon: '📊', text: 'Customer behaviour analytics & heatmaps' },
+      { icon: '🔧', text: 'RKNN-optimised model for low-latency inference' },
+    ],
+    preview: 'retail-tracking',
+  },
+  {
+    id: 6,
+    company: 'VTI Corporation · AI Engineer · Team of 15',
+    title: 'Billboard Audience Analytics',
+    tagline: 'Real-time audience insights from billboards using Edge AI',
+    description:
+      'Edge-based analytics system to estimate audience age, gender, and dwell time for digital billboards using computer vision. Delivers real-time marketing insights to clients without storing personal data.',
+    status: 'Live',
+    tech: [
+      { label: 'Age/Gender Est.', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300' },
+      { label: 'YOLO', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
+      { label: 'TensorRT', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'Rockchip', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300' },
+      { label: 'Prometheus', color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+      { label: 'Grafana', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200' },
+    ],
+    features: [
+      { icon: '👥', text: 'Real-time audience counting from camera feeds' },
+      { icon: '🎂', text: 'Age & gender estimation per detected face' },
+      { icon: '⏱️', text: 'Dwell time measurement per viewer' },
+      { icon: '🔒', text: 'Privacy-preserving: no biometric data stored' },
+      { icon: '📡', text: 'Live dashboard via Prometheus + Grafana' },
+      { icon: '⚡', text: 'Optimised inference on Rockchip edge hardware' },
+    ],
+    preview: 'billboard-analytics',
+  },
+  {
+    id: 7,
+    company: 'VTI Corporation · AI Engineer · Edge Devices',
+    title: 'Face Tracking on Edge Devices',
+    tagline: 'Real-time face detection & tracking on resource-constrained hardware',
+    description:
+      'Deployed face detection, recognition, and tracking pipelines on Jetson Nano, Jetson Xavier NX, and Rockchip RV1126 edge devices. Built Python-C++ bindings via Pybind and optimised models with TensorRT & RKNN for sub-20ms inference.',
+    status: 'Live',
+    tech: [
+      { label: 'Jetson Nano', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
+      { label: 'Jetson Xavier NX', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200' },
+      { label: 'Rockchip', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300' },
+      { label: 'TensorRT', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+      { label: 'RKNN', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' },
+      { label: 'Pybind', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' },
+      { label: 'C++', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    ],
+    features: [
+      { icon: '🔬', text: 'RetinaFace + FaceNet pipeline on edge hardware' },
+      { icon: '⚡', text: 'Sub-20ms inference with TensorRT & RKNN backends' },
+      { icon: '🐍', text: 'Python-C++ bindings via Pybind for custom ops' },
+      { icon: '📹', text: 'Multi-camera tracking with persistent face IDs' },
+      { icon: '🔧', text: 'Model quantisation (INT8/FP16) for memory efficiency' },
+      { icon: '📊', text: 'Performance monitoring with latency & FPS metrics' },
+    ],
+    preview: 'facetracking-edge',
+  },
 ]
 
 /* ── Status pill ─────────────────────────────────── */
@@ -66,24 +234,30 @@ const statusStyle: Record<Project['status'], string> = {
   Archived: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400',
 }
 
-/* ── Browser-frame mock preview ─────────────────── */
-function ChatbotDBPreview() {
+/* ── Shared browser frame wrapper ─────────────────── */
+function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
   return (
-    /* Browser shell */
     <div className="rounded-xl overflow-hidden border border-border shadow-2xl bg-neutral-50 dark:bg-neutral-900">
-
-      {/* Title bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-200 dark:bg-neutral-800 border-b border-border">
         <span className="w-3 h-3 rounded-full bg-red-400" />
         <span className="w-3 h-3 rounded-full bg-yellow-400" />
         <span className="w-3 h-3 rounded-full bg-green-400" />
         <div className="flex-1 mx-3 bg-white dark:bg-neutral-700 rounded-md px-3 py-1 text-[10px] text-muted-foreground font-mono truncate">
-          localhost:3000 / chat
+          {url}
         </div>
       </div>
+      <div className="h-72 sm:h-80">
+        {children}
+      </div>
+    </div>
+  )
+}
 
-      {/* App body — split view */}
-      <div className="grid grid-cols-2 h-72 sm:h-80">
+/* ── Browser-frame mock previews ─────────────────── */
+function ChatbotDBPreview() {
+  return (
+    <BrowserFrame url="localhost:3000 / chat">
+      <div className="grid grid-cols-2 h-full">
 
         {/* Left — Chat panel */}
         <div className="flex flex-col bg-white dark:bg-neutral-950 border-r border-border overflow-hidden">
@@ -95,23 +269,19 @@ function ChatbotDBPreview() {
             <span className="text-[10px] font-semibold text-foreground">DataBot</span>
             <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />
           </div>
-
           {/* Messages */}
           <div className="flex-1 overflow-hidden px-2.5 py-2 space-y-2">
-            {/* User */}
             <div className="flex justify-end">
               <div className="bg-blue-500 text-white text-[9px] rounded-xl rounded-br-sm px-2.5 py-1.5 max-w-[80%] leading-relaxed">
                 Show me monthly revenue for 2024
               </div>
             </div>
-            {/* Bot thinking */}
             <div className="flex items-end gap-1.5">
               <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shrink-0" />
               <div className="bg-neutral-100 dark:bg-neutral-800 text-[9px] rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[80%] text-muted-foreground leading-relaxed">
                 Sure! Let me query the database…
               </div>
             </div>
-            {/* SQL chip */}
             <div className="flex items-end gap-1.5">
               <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shrink-0" />
               <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg px-2 py-1.5 max-w-[85%]">
@@ -124,7 +294,6 @@ function ChatbotDBPreview() {
                 </code>
               </div>
             </div>
-            {/* Bot result */}
             <div className="flex items-end gap-1.5">
               <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shrink-0" />
               <div className="bg-neutral-100 dark:bg-neutral-800 text-[9px] rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[80%] text-muted-foreground leading-relaxed">
@@ -132,7 +301,6 @@ function ChatbotDBPreview() {
               </div>
             </div>
           </div>
-
           {/* Input */}
           <div className="px-2.5 py-2 border-t border-border">
             <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg px-2.5 py-1.5">
@@ -146,84 +314,38 @@ function ChatbotDBPreview() {
 
         {/* Right — Chart panel */}
         <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
-          {/* Chart header */}
           <div className="px-3 py-2 border-b border-border flex items-center justify-between">
             <span className="text-[10px] font-semibold text-foreground">Visualisation</span>
             <div className="flex gap-1">
               {['Bar', 'Line', 'Pie'].map((t) => (
-                <span
-                  key={t}
-                  className={`text-[8px] px-1.5 py-0.5 rounded-md cursor-pointer ${
-                    t === 'Line'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-neutral-200 dark:bg-neutral-700 text-muted-foreground'
-                  }`}
-                >
-                  {t}
-                </span>
+                <span key={t} className={`text-[8px] px-1.5 py-0.5 rounded-md cursor-pointer ${t === 'Line' ? 'bg-blue-500 text-white' : 'bg-neutral-200 dark:bg-neutral-700 text-muted-foreground'}`}>{t}</span>
               ))}
             </div>
           </div>
-
-          {/* Fake line chart */}
           <div className="flex-1 flex flex-col p-3 gap-1">
             <span className="text-[9px] text-muted-foreground font-medium">Monthly Revenue — 2024</span>
-
-            {/* SVG chart */}
             <div className="flex-1 relative">
               <svg viewBox="0 0 280 150" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                {/* Grid lines */}
-                {[0, 37, 74, 111, 148].map((y) => (
-                  <line key={y} x1="30" y1={y + 1} x2="275" y2={y + 1} stroke="currentColor" strokeOpacity="0.08" strokeWidth="1"/>
-                ))}
-                {/* Y axis labels */}
-                {['50k','37k','25k','12k','0'].map((label, i) => (
-                  <text key={label} x="26" y={i * 37 + 5} textAnchor="end" fontSize="7" fill="currentColor" fillOpacity="0.4">{label}</text>
-                ))}
-                {/* X axis labels */}
-                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, i) => (
-                  <text key={m} x={30 + i * 20.5} y="155" textAnchor="middle" fontSize="6" fill="currentColor" fillOpacity="0.4">{m}</text>
-                ))}
-                {/* Area fill */}
+                {[0, 37, 74, 111, 148].map((y) => (<line key={y} x1="30" y1={y + 1} x2="275" y2={y + 1} stroke="currentColor" strokeOpacity="0.08" strokeWidth="1"/>))}
+                {['50k','37k','25k','12k','0'].map((label, i) => (<text key={label} x="26" y={i * 37 + 5} textAnchor="end" fontSize="7" fill="currentColor" fillOpacity="0.4">{label}</text>))}
+                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, i) => (<text key={m} x={30 + i * 20.5} y="155" textAnchor="middle" fontSize="6" fill="currentColor" fillOpacity="0.4">{m}</text>))}
                 <defs>
                   <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3"/>
                     <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.02"/>
                   </linearGradient>
                 </defs>
-                <path
-                  d="M30,120 L50,105 L71,90 L91,95 L112,75 L132,60 L153,55 L173,40 L194,50 L214,35 L235,25 L255,20 L255,149 L30,149 Z"
-                  fill="url(#areaGrad)"
-                />
-                {/* Line */}
-                <polyline
-                  points="30,120 50,105 71,90 91,95 112,75 132,60 153,55 173,40 194,50 214,35 235,25 255,20"
-                  fill="none"
-                  stroke="#3b82f6"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                />
-                {/* Dots */}
-                {[
-                  [30,120],[50,105],[71,90],[91,95],[112,75],[132,60],
-                  [153,55],[173,40],[194,50],[214,35],[235,25],[255,20],
-                ].map(([cx, cy], i) => (
+                <path d="M30,120 L50,105 L71,90 L91,95 L112,75 L132,60 L153,55 L173,40 L194,50 L214,35 L235,25 L255,20 L255,149 L30,149 Z" fill="url(#areaGrad)"/>
+                <polyline points="30,120 50,105 71,90 91,95 112,75 132,60 153,55 173,40 194,50 214,35 235,25 255,20" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+                {[[30,120],[50,105],[71,90],[91,95],[112,75],[132,60],[153,55],[173,40],[194,50],[214,35],[235,25],[255,20]].map(([cx, cy], i) => (
                   <circle key={i} cx={cx} cy={cy} r="2.5" fill="#3b82f6" stroke="white" strokeWidth="1.5"/>
                 ))}
-                {/* Tooltip on last point */}
                 <rect x="238" y="5" width="32" height="14" rx="3" fill="#3b82f6"/>
                 <text x="254" y="14.5" textAnchor="middle" fontSize="7" fill="white" fontWeight="bold">$48.2k</text>
               </svg>
             </div>
-
-            {/* Summary stats */}
             <div className="grid grid-cols-3 gap-1 mt-1">
-              {[
-                { label: 'Total', value: '$342k' },
-                { label: 'Peak', value: '$48.2k' },
-                { label: 'Growth', value: '+24%' },
-              ].map((s) => (
+              {[{ label: 'Total', value: '$342k' },{ label: 'Peak', value: '$48.2k' },{ label: 'Growth', value: '+24%' }].map((s) => (
                 <div key={s.label} className="bg-white dark:bg-neutral-800 rounded-lg px-2 py-1.5 text-center border border-border">
                   <p className="text-[9px] font-bold text-foreground">{s.value}</p>
                   <p className="text-[7px] text-muted-foreground">{s.label}</p>
@@ -232,9 +354,556 @@ function ChatbotDBPreview() {
             </div>
           </div>
         </div>
+
       </div>
-    </div>
+    </BrowserFrame>
   )
+}
+
+function EcommerceChatbotPreview() {
+  return (
+    <BrowserFrame url="localhost:3000 / shop-assistant">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Chat */}
+        <div className="flex flex-col bg-white dark:bg-neutral-950 border-r border-border overflow-hidden">
+          <div className="px-3 py-2 border-b border-border flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+              <span className="text-[8px] text-white font-bold">🛍</span>
+            </div>
+            <span className="text-[10px] font-semibold text-foreground">ShopBot</span>
+            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          </div>
+          <div className="flex-1 overflow-hidden px-2.5 py-2 space-y-2">
+            <div className="flex justify-end">
+              <div className="bg-orange-500 text-white text-[9px] rounded-xl rounded-br-sm px-2.5 py-1.5 max-w-[80%] leading-relaxed">
+                Running shoes under $100, size 10
+              </div>
+            </div>
+            <div className="flex items-end gap-1.5">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 shrink-0" />
+              <div className="bg-neutral-100 dark:bg-neutral-800 text-[9px] rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[80%] text-muted-foreground leading-relaxed">
+                Found 3 great matches for you!
+              </div>
+            </div>
+            {[
+              { name: 'Nike Air Zoom', price: '$89.99', score: '98%' },
+              { name: 'Adidas Ultraboost', price: '$94.99', score: '95%' },
+              { name: 'New Balance 880', price: '$84.99', score: '91%' },
+            ].map((p) => (
+              <div key={p.name} className="flex items-end gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 shrink-0 opacity-0" />
+                <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg px-2 py-1.5 flex items-center gap-2 w-full">
+                  <div className="w-5 h-5 rounded bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-[8px]">👟</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[8px] font-semibold text-foreground truncate">{p.name}</p>
+                    <p className="text-[7px] text-orange-500">{p.price}</p>
+                  </div>
+                  <span className="text-[7px] text-emerald-600 dark:text-emerald-400 font-mono">{p.score}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="px-2.5 py-2 border-t border-border">
+            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg px-2.5 py-1.5">
+              <span className="text-[9px] text-muted-foreground flex-1">What are you looking for?</span>
+              <div className="w-4 h-4 rounded-md bg-orange-500 flex items-center justify-center">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — Product grid */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border">
+            <span className="text-[10px] font-semibold text-foreground">Product Catalogue</span>
+            <p className="text-[8px] text-muted-foreground">247 items · filtered by AI</p>
+          </div>
+          <div className="flex-1 p-2 grid grid-cols-2 gap-1.5 content-start">
+            {[
+              { emoji: '👟', name: 'Nike Air Zoom', price: '$89.99', tag: 'Best Match' },
+              { emoji: '👟', name: 'Adidas Ultra', price: '$94.99', tag: 'Popular' },
+              { emoji: '🥾', name: 'New Balance', price: '$84.99', tag: 'Value' },
+              { emoji: '👟', name: 'ASICS Gel', price: '$99.00', tag: '' },
+            ].map((item) => (
+              <div key={item.name} className="bg-white dark:bg-neutral-800 rounded-lg p-2 border border-border">
+                <div className="w-full aspect-square bg-neutral-100 dark:bg-neutral-700 rounded-md mb-1.5 flex items-center justify-center text-2xl">{item.emoji}</div>
+                <p className="text-[8px] font-semibold text-foreground truncate leading-tight">{item.name}</p>
+                <p className="text-[8px] text-orange-500 font-mono">{item.price}</p>
+                {item.tag && <span className="text-[6px] bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-1 py-0.5 rounded-full">{item.tag}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+function KnowledgeChatbotPreview() {
+  return (
+    <BrowserFrame url="localhost:3000 / knowledge-base">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Chat with citations */}
+        <div className="flex flex-col bg-white dark:bg-neutral-950 border-r border-border overflow-hidden">
+          <div className="px-3 py-2 border-b border-border flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+              <span className="text-[8px] text-white font-bold">K</span>
+            </div>
+            <span className="text-[10px] font-semibold text-foreground">KnowledgeBot</span>
+            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          </div>
+          <div className="flex-1 overflow-hidden px-2.5 py-2 space-y-2">
+            <div className="flex justify-end">
+              <div className="bg-purple-500 text-white text-[9px] rounded-xl rounded-br-sm px-2.5 py-1.5 max-w-[80%] leading-relaxed">
+                What is our annual leave policy?
+              </div>
+            </div>
+            <div className="flex items-start gap-1.5">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 shrink-0 mt-0.5" />
+              <div className="space-y-1.5 flex-1">
+                <div className="bg-neutral-100 dark:bg-neutral-800 text-[9px] rounded-xl rounded-tl-sm px-2.5 py-1.5 text-muted-foreground leading-relaxed">
+                  Employees are entitled to <strong className="text-foreground">14 days</strong> annual leave per year, increasing to 16 days after 5 years of service.
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-2 py-1 border border-purple-200 dark:border-purple-800/50">
+                  <p className="text-[7px] text-purple-600 dark:text-purple-400 font-semibold mb-0.5">Sources</p>
+                  {['HR_Policy_2024.pdf · p.3', 'Employee_Handbook.docx · p.12'].map((src) => (
+                    <p key={src} className="text-[7px] text-muted-foreground truncate">📄 {src}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="px-2.5 py-2 border-t border-border">
+            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg px-2.5 py-1.5">
+              <span className="text-[9px] text-muted-foreground flex-1">Ask anything about company…</span>
+              <div className="w-4 h-4 rounded-md bg-purple-500 flex items-center justify-center">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — Document index */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+            <span className="text-[10px] font-semibold text-foreground">Knowledge Base</span>
+            <span className="text-[8px] text-emerald-600 dark:text-emerald-400">● synced</span>
+          </div>
+          <div className="flex-1 p-2.5 space-y-2 overflow-hidden">
+            {[
+              { name: 'HR_Policy_2024.pdf', score: 94, pages: 18 },
+              { name: 'Employee_Handbook.docx', score: 71, pages: 42 },
+              { name: 'Benefits_Guide.pdf', score: 58, pages: 9 },
+              { name: 'IT_Security_Policy.pdf', score: 34, pages: 15 },
+              { name: 'Onboarding_Kit.pptx', score: 22, pages: 30 },
+            ].map((doc) => (
+              <div key={doc.name} className="space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px]">{doc.name.endsWith('.pdf') ? '📕' : doc.name.endsWith('.docx') ? '📘' : '📊'}</span>
+                    <span className="text-[8px] text-foreground font-medium truncate max-w-[110px]">{doc.name}</span>
+                  </div>
+                  <span className="text-[7px] text-muted-foreground font-mono shrink-0">{doc.score}%</span>
+                </div>
+                <div className="w-full h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${doc.score > 80 ? 'bg-purple-500' : doc.score > 50 ? 'bg-purple-400' : 'bg-neutral-400'}`}
+                    style={{ width: `${doc.score}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+            <div className="pt-1 border-t border-border">
+              <p className="text-[7px] text-muted-foreground">Last indexed: 2 min ago · 5 documents · 114 pages</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+function AiOcrPreview() {
+  return (
+    <BrowserFrame url="localhost:8000 / ocr / certificate">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Certificate mockup */}
+        <div className="flex flex-col bg-neutral-100 dark:bg-neutral-800 border-r border-border overflow-hidden p-3">
+          <p className="text-[9px] font-semibold text-muted-foreground mb-2">Input Document</p>
+          <div className="flex-1 bg-white dark:bg-neutral-900 rounded-lg border border-border p-2 relative overflow-hidden">
+            {/* Certificate header */}
+            <div className="text-center mb-2">
+              <div className="text-[7px] font-bold text-foreground">GIẤY CHỨNG NHẬN KIỂM ĐỊNH</div>
+              <div className="text-[6px] text-muted-foreground">Car Inspection Certificate</div>
+            </div>
+            {/* Document fields with detection boxes */}
+            <svg viewBox="0 0 160 140" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              {/* Field lines */}
+              {[
+                { y: 10, w: 140, label: 'Biển số / Plate' },
+                { y: 28, w: 120, label: 'Chủ xe / Owner' },
+                { y: 46, w: 100, label: 'Số khung / VIN' },
+                { y: 64, w: 110, label: 'Số máy / Engine' },
+                { y: 82, w: 90, label: 'Ngày HH / Expiry' },
+              ].map((field, i) => (
+                <g key={field.label}>
+                  <rect x="10" y={field.y} width={field.w} height="13" rx="2" fill="none" stroke={i < 3 ? '#3b82f6' : '#10b981'} strokeWidth="1.5" strokeDasharray={i < 3 ? '0' : '3,2'}/>
+                  <text x="14" y={field.y + 5} fontSize="5" fill="currentColor" fillOpacity="0.4">{field.label}</text>
+                  <rect x="14" y={field.y + 7} width={field.w - 30} height="4" rx="1" fill={i < 3 ? '#3b82f6' : '#10b981'} fillOpacity="0.15"/>
+                </g>
+              ))}
+              {/* Detected indicator */}
+              <circle cx="148" cy="16" r="4" fill="#3b82f6"/>
+              <text x="148" y="18.5" textAnchor="middle" fontSize="5.5" fill="white">✓</text>
+            </svg>
+          </div>
+          <div className="mt-2 flex gap-1">
+            <span className="text-[7px] bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded-full">Detected: 5</span>
+            <span className="text-[7px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded-full">Conf: 97.4%</span>
+          </div>
+        </div>
+
+        {/* Right — Extracted fields */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border">
+            <span className="text-[10px] font-semibold text-foreground">Extracted Fields</span>
+          </div>
+          <div className="flex-1 p-2.5 space-y-1.5 overflow-hidden">
+            {[
+              { key: 'Plate Number', val: '51F-123.45', conf: 99 },
+              { key: 'Owner Name', val: 'Nguyen Van A', conf: 97 },
+              { key: 'VIN', val: 'VN123456789012', conf: 96 },
+              { key: 'Engine No', val: 'ABC123456', conf: 98 },
+              { key: 'Expiry Date', val: '12/2025', conf: 95 },
+            ].map((field) => (
+              <div key={field.key} className="bg-white dark:bg-neutral-800 rounded-lg px-2.5 py-1.5 border border-border">
+                <div className="flex items-center justify-between mb-0.5">
+                  <p className="text-[7.5px] text-muted-foreground">{field.key}</p>
+                  <span className={`text-[7px] font-mono ${field.conf > 97 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{field.conf}%</span>
+                </div>
+                <p className="text-[9px] font-semibold text-foreground font-mono">{field.val}</p>
+              </div>
+            ))}
+          </div>
+          <div className="px-2.5 pb-2">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg px-2.5 py-1.5 border border-emerald-200 dark:border-emerald-800/50 flex items-center gap-2">
+              <span className="text-emerald-500 text-sm">✓</span>
+              <div>
+                <p className="text-[8px] font-semibold text-emerald-700 dark:text-emerald-300">Validation passed</p>
+                <p className="text-[7px] text-muted-foreground">All fields extracted · 18ms</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+function RetailTrackingPreview() {
+  return (
+    <BrowserFrame url="localhost:3000 / retail / track">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Top-down camera view */}
+        <div className="flex flex-col bg-neutral-900 border-r border-border overflow-hidden">
+          <div className="px-3 py-1.5 border-b border-neutral-700 flex items-center justify-between">
+            <span className="text-[9px] font-semibold text-neutral-300">Camera 01 — Store A</span>
+            <span className="text-[7px] text-red-400 font-mono animate-pulse">● REC</span>
+          </div>
+          <div className="flex-1 relative p-2">
+            <svg viewBox="0 0 160 170" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              {/* Shelves */}
+              <rect x="10" y="10" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              <rect x="90" y="10" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              <rect x="10" y="40" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              <rect x="90" y="40" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              <rect x="10" y="70" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              <rect x="90" y="70" width="60" height="15" rx="2" fill="#374151" stroke="#4b5563" strokeWidth="1"/>
+              {/* Checkout zone */}
+              <rect x="50" y="140" width="60" height="22" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,2"/>
+              <text x="80" y="153" textAnchor="middle" fontSize="6" fill="#60a5fa">CHECKOUT</text>
+              {/* Person tracks */}
+              <polyline points="75,30 78,55 72,85 75,120 75,145" fill="none" stroke="#22c55e" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="3,2"/>
+              <polyline points="40,100 50,120 65,140 75,145" fill="none" stroke="#f97316" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="3,2"/>
+              {/* Person blobs */}
+              <circle cx="75" cy="145" r="7" fill="#22c55e" fillOpacity="0.3" stroke="#22c55e" strokeWidth="1.5"/>
+              <text x="75" y="147.5" textAnchor="middle" fontSize="5.5" fill="#22c55e" fontWeight="bold">#1</text>
+              <circle cx="40" cy="100" r="7" fill="#f97316" fillOpacity="0.3" stroke="#f97316" strokeWidth="1.5"/>
+              <text x="40" y="102.5" textAnchor="middle" fontSize="5.5" fill="#f97316" fontWeight="bold">#2</text>
+              <circle cx="115" cy="60" r="7" fill="#a78bfa" fillOpacity="0.3" stroke="#a78bfa" strokeWidth="1.5"/>
+              <text x="115" y="62.5" textAnchor="middle" fontSize="5.5" fill="#a78bfa" fontWeight="bold">#3</text>
+            </svg>
+          </div>
+          <div className="px-2.5 pb-2 flex gap-1.5">
+            <span className="text-[7px] bg-neutral-700 text-neutral-300 px-2 py-0.5 rounded-full">3 active</span>
+            <span className="text-[7px] bg-emerald-900/50 text-emerald-400 px-2 py-0.5 rounded-full">30 FPS</span>
+          </div>
+        </div>
+
+        {/* Right — Auto Payment panel */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border">
+            <span className="text-[10px] font-semibold text-foreground">Auto Checkout</span>
+            <p className="text-[8px] text-muted-foreground">Customer #1 · detected items</p>
+          </div>
+          <div className="flex-1 p-2.5 space-y-1.5 overflow-hidden">
+            {[
+              { name: 'Whole Milk 1L', qty: 1, price: '$1.80' },
+              { name: 'Sourdough Bread', qty: 2, price: '$5.60' },
+              { name: 'Orange Juice', qty: 1, price: '$2.40' },
+              { name: 'Greek Yogurt', qty: 1, price: '$2.70' },
+            ].map((item) => (
+              <div key={item.name} className="flex items-center justify-between bg-white dark:bg-neutral-800 rounded-lg px-2.5 py-1.5 border border-border">
+                <div>
+                  <p className="text-[8.5px] font-medium text-foreground">{item.name}</p>
+                  <p className="text-[7px] text-muted-foreground">Qty: {item.qty}</p>
+                </div>
+                <p className="text-[9px] font-mono font-semibold text-foreground">{item.price}</p>
+              </div>
+            ))}
+          </div>
+          <div className="px-2.5 pb-2.5 space-y-1.5">
+            <div className="flex justify-between px-0.5">
+              <span className="text-[9px] font-semibold text-foreground">Total</span>
+              <span className="text-[9px] font-bold text-foreground font-mono">$12.50</span>
+            </div>
+            <div className="bg-blue-500 rounded-lg px-3 py-2 flex items-center gap-2">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <p className="text-[9px] font-semibold text-white">Processing payment…</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+function BillboardAnalyticsPreview() {
+  return (
+    <BrowserFrame url="localhost:3000 / billboard / dashboard">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Camera view */}
+        <div className="flex flex-col bg-neutral-900 border-r border-border overflow-hidden">
+          <div className="px-3 py-1.5 border-b border-neutral-700 flex items-center justify-between">
+            <span className="text-[9px] font-semibold text-neutral-300">Billboard Cam — Hanoi CBD</span>
+            <span className="text-[7px] text-red-400 font-mono">● LIVE</span>
+          </div>
+          <div className="flex-1 relative p-2">
+            <svg viewBox="0 0 160 180" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              {/* Street / scene background */}
+              <rect x="0" y="0" width="160" height="180" fill="#111827"/>
+              <rect x="20" y="120" width="120" height="60" fill="#1f2937"/>
+              {/* Billboard */}
+              <rect x="30" y="10" width="100" height="55" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="1.5"/>
+              <text x="80" y="35" textAnchor="middle" fontSize="8" fill="#3b82f6" fontWeight="bold">ADVERTISEMENT</text>
+              <text x="80" y="47" textAnchor="middle" fontSize="6" fill="#60a5fa">BrandName™</text>
+              {/* Audience face boxes */}
+              {[
+                { x: 20, y: 125, label: 'M/35y', color: '#3b82f6' },
+                { x: 62, y: 122, label: 'F/28y', color: '#ec4899' },
+                { x: 105, y: 128, label: 'M/42y', color: '#3b82f6' },
+                { x: 138, y: 126, label: 'F/31y', color: '#ec4899' },
+              ].map((person) => (
+                <g key={person.label}>
+                  <rect x={person.x} y={person.y} width="16" height="20" rx="1" fill="none" stroke={person.color} strokeWidth="1.5"/>
+                  <rect x={person.x} y={person.y - 9} width="28" height="9" rx="1.5" fill={person.color}/>
+                  <text x={person.x + 14} y={person.y - 2} textAnchor="middle" fontSize="5.5" fill="white" fontWeight="bold">{person.label}</text>
+                  <circle cx={person.x + 8} cy={person.y + 8} r="5" fill={`${person.color}40`}/>
+                </g>
+              ))}
+              {/* Person silhouettes */}
+              {[28, 70, 113, 146].map((x) => (
+                <rect key={x} x={x} y="146" width="16" height="30" rx="4" fill="#374151"/>
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        {/* Right — Analytics panel */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border">
+            <span className="text-[10px] font-semibold text-foreground">Audience Insights</span>
+            <p className="text-[8px] text-muted-foreground">Today · real-time</p>
+          </div>
+          <div className="flex-1 p-2.5 space-y-2 overflow-hidden">
+            {/* Impression stats */}
+            <div className="grid grid-cols-2 gap-1.5">
+              {[
+                { label: 'Impressions', value: '1,247' },
+                { label: 'Avg Dwell', value: '4.2s' },
+              ].map((s) => (
+                <div key={s.label} className="bg-white dark:bg-neutral-800 rounded-lg px-2 py-1.5 border border-border text-center">
+                  <p className="text-[10px] font-bold text-foreground">{s.value}</p>
+                  <p className="text-[7px] text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            {/* Gender split */}
+            <div className="bg-white dark:bg-neutral-800 rounded-lg p-2 border border-border">
+              <p className="text-[8px] font-semibold text-foreground mb-1.5">Gender Split</p>
+              <div className="flex gap-1 h-2 w-full rounded-full overflow-hidden">
+                <div className="bg-blue-500" style={{ width: '58%' }}/>
+                <div className="bg-pink-400" style={{ width: '42%' }}/>
+              </div>
+              <div className="flex justify-between mt-1">
+                <span className="text-[7px] text-blue-500">Male 58%</span>
+                <span className="text-[7px] text-pink-400">Female 42%</span>
+              </div>
+            </div>
+            {/* Age groups bar chart */}
+            <div className="bg-white dark:bg-neutral-800 rounded-lg p-2 border border-border">
+              <p className="text-[8px] font-semibold text-foreground mb-2">Age Groups</p>
+              <div className="space-y-1">
+                {[
+                  { range: '18-24', pct: 22 },
+                  { range: '25-34', pct: 38 },
+                  { range: '35-44', pct: 28 },
+                  { range: '45+', pct: 12 },
+                ].map((ag) => (
+                  <div key={ag.range} className="flex items-center gap-1.5">
+                    <span className="text-[7px] text-muted-foreground w-8 shrink-0">{ag.range}</span>
+                    <div className="flex-1 h-2 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-400 rounded-full" style={{ width: `${ag.pct}%` }}/>
+                    </div>
+                    <span className="text-[7px] font-mono text-muted-foreground w-5 text-right">{ag.pct}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+function FacetrackingEdgePreview() {
+  return (
+    <BrowserFrame url="192.168.1.100 / edge / monitor">
+      <div className="grid grid-cols-2 h-full">
+
+        {/* Left — Device info panel */}
+        <div className="flex flex-col bg-neutral-900 border-r border-border overflow-hidden">
+          <div className="px-3 py-1.5 border-b border-neutral-700 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-[9px] font-semibold text-neutral-300">Jetson Xavier NX</span>
+          </div>
+          <div className="flex-1 p-2.5 space-y-2 overflow-hidden">
+            {/* Device specs */}
+            <div className="space-y-1.5">
+              {[
+                { label: 'GPU', val: 'Volta 384-core', pct: 72, color: 'bg-green-500' },
+                { label: 'CPU', val: '6-core Carmel', pct: 45, color: 'bg-blue-500' },
+                { label: 'RAM', val: '7.4 / 8.0 GB', pct: 88, color: 'bg-yellow-500' },
+              ].map((r) => (
+                <div key={r.label}>
+                  <div className="flex justify-between mb-0.5">
+                    <span className="text-[7.5px] text-neutral-400">{r.label}</span>
+                    <span className="text-[7px] text-neutral-500 font-mono">{r.val}</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-neutral-700 rounded-full overflow-hidden">
+                    <div className={`h-full ${r.color} rounded-full`} style={{ width: `${r.pct}%` }}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Model info */}
+            <div className="bg-neutral-800 rounded-lg p-2 space-y-1 border border-neutral-700">
+              <p className="text-[7.5px] text-neutral-400 font-semibold uppercase tracking-wide">Pipeline</p>
+              {[
+                { label: 'Detector', val: 'RetinaFace' },
+                { label: 'Embedder', val: 'FaceNet-512' },
+                { label: 'Backend', val: 'TensorRT FP16' },
+                { label: 'Latency', val: '18 ms/frame' },
+              ].map((m) => (
+                <div key={m.label} className="flex justify-between">
+                  <span className="text-[7px] text-neutral-500">{m.label}</span>
+                  <span className="text-[7px] text-neutral-300 font-mono">{m.val}</span>
+                </div>
+              ))}
+            </div>
+            {/* Tracking stats */}
+            <div className="grid grid-cols-2 gap-1">
+              {[{ label: 'Tracked', value: '4' }, { label: 'FPS', value: '30' }].map((s) => (
+                <div key={s.label} className="bg-neutral-800 rounded-lg p-1.5 text-center border border-neutral-700">
+                  <p className="text-[10px] font-bold text-emerald-400">{s.value}</p>
+                  <p className="text-[6px] text-neutral-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right — 4-camera grid */}
+        <div className="flex flex-col bg-neutral-800 overflow-hidden">
+          <div className="px-3 py-1.5 border-b border-neutral-700">
+            <span className="text-[9px] font-semibold text-neutral-300">Camera Grid</span>
+          </div>
+          <div className="flex-1 grid grid-cols-2 gap-0.5 p-1">
+            {[
+              { id: 'CAM01', faceId: '042', status: 'TRACKING' },
+              { id: 'CAM02', faceId: '017', status: 'TRACKING' },
+              { id: 'CAM03', faceId: null, status: 'IDLE' },
+              { id: 'CAM04', faceId: '091', status: 'TRACKING' },
+            ].map((cam) => (
+              <div key={cam.id} className="relative bg-neutral-900 rounded overflow-hidden flex items-center justify-center">
+                <svg viewBox="0 0 80 70" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="80" height="70" fill="#111827"/>
+                  {cam.faceId ? (
+                    <>
+                      {/* Face silhouette */}
+                      <ellipse cx="40" cy="30" rx="14" ry="18" fill="#374151"/>
+                      <ellipse cx="40" cy="55" rx="20" ry="12" fill="#374151"/>
+                      {/* Tracking box */}
+                      <rect x="22" y="10" width="36" height="42" rx="2" fill="none" stroke="#22c55e" strokeWidth="1.5"/>
+                      {/* Corner brackets */}
+                      <path d="M22,14 L22,10 L26,10" fill="none" stroke="#22c55e" strokeWidth="2"/>
+                      <path d="M54,14 L54,10 L50,10" fill="none" stroke="#22c55e" strokeWidth="2"/>
+                      <path d="M22,48 L22,52 L26,52" fill="none" stroke="#22c55e" strokeWidth="2"/>
+                      <path d="M54,48 L54,52 L50,52" fill="none" stroke="#22c55e" strokeWidth="2"/>
+                      {/* ID label */}
+                      <rect x="22" y="2" width="20" height="8" rx="1" fill="#22c55e"/>
+                      <text x="32" y="8" textAnchor="middle" fontSize="5" fill="black" fontWeight="bold">ID:{cam.faceId}</text>
+                    </>
+                  ) : (
+                    <text x="40" y="38" textAnchor="middle" fontSize="7" fill="#4b5563">No Face</text>
+                  )}
+                  {/* Cam label */}
+                  <text x="4" y="65" fontSize="5" fill="#6b7280">{cam.id}</text>
+                  <circle cx="74" cy="64" r="3" fill={cam.status === 'TRACKING' ? '#22c55e' : '#6b7280'}/>
+                </svg>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </BrowserFrame>
+  )
+}
+
+/* ── Preview dispatch ────────────────────────────── */
+function ProjectPreview({ type }: { type: PreviewType }) {
+  switch (type) {
+    case 'chatbot-db':          return <ChatbotDBPreview />
+    case 'ecommerce-chatbot':   return <EcommerceChatbotPreview />
+    case 'knowledge-chatbot':   return <KnowledgeChatbotPreview />
+    case 'ai-ocr':              return <AiOcrPreview />
+    case 'retail-tracking':     return <RetailTrackingPreview />
+    case 'billboard-analytics': return <BillboardAnalyticsPreview />
+    case 'facetracking-edge':   return <FacetrackingEdgePreview />
+  }
 }
 
 /* ── Project card ────────────────────────────────── */
@@ -243,11 +912,17 @@ function ProjectCard({ project }: { project: Project }) {
     <article className="rounded-2xl border border-border bg-background overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Preview */}
       <div className="p-5 pb-0 bg-gradient-to-b from-blue-50/60 dark:from-blue-950/20 to-transparent">
-        {project.preview === 'chatbot-db' && <ChatbotDBPreview />}
+        <ProjectPreview type={project.preview} />
       </div>
 
       {/* Content */}
       <div className="p-6 pt-5">
+        {/* Company badge */}
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-2 flex items-center gap-1.5">
+          <span className="inline-block w-3 h-px bg-blue-500 dark:bg-blue-400" />
+          {project.company}
+        </p>
+
         {/* Status + title row */}
         <div className="flex items-start justify-between gap-3 mb-2">
           <h2 className="text-lg font-bold text-foreground leading-snug">{project.title}</h2>
