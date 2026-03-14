@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { ProjectsGrid } from './ProjectsGrid'
 
 export const metadata: Metadata = generateSeoMetadata({
-  title: 'Projects',
+  title: 'Featured Projects',
   description: 'A showcase of AI and full-stack projects built by Isben — chatbots, data visualization, and more.',
 })
 
