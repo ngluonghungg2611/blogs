@@ -278,9 +278,10 @@ export default function AboutPage() {
               {[
                 {
                   name: 'Legal Knowledge Base Platform', role: 'AI Engineer', team: null,
-                  desc: 'Built knowledge-base capabilities for legal-domain users, enabling secure search, retrieval, and grounded LLM responses over private enterprise documents.',
+                  desc: 'Built knowledge-base capabilities for legal-domain users, enabling secure GraphRAG retrieval and grounded LLM responses over private enterprise documents.',
                   bullets: [
-                    'Designed retrieval flows for document-heavy legal content with attention to access control, traceability, and answer grounding.',
+                    'Designed GraphRAG retrieval flows for document-heavy legal content with attention to traceability and answer grounding.',
+                    'Implemented ACL-aware access control to ensure users only retrieve and summarize authorized knowledge sources.',
                     'Developed ingestion and indexing components for private knowledge sources.',
                     'Applied time-series modeling to optimize information update flows and keep the knowledge base current.',
                     'Improved response quality through retrieval tuning, prompt design, and evaluation loops.',
