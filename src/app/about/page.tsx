@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = generateSeoMetadata({
   title: 'About',
   description:
-    'AI Engineer with experience in RAG/GraphRAG/AgenticRAG, Chatbot Development, Computer Vision, and Edge AI deployment across retail, e-commerce, manufacturing, and recruitment sectors.',
+    'AI Engineer focused on production LLM systems, knowledge-base platforms, fine-tuning, and self-hosted/on-premise LLM deployments for enterprise and legal-domain applications.',
 })
 
 const skillGroups = [
@@ -128,27 +128,31 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* ── Objective ── */}
+      {/* ── About ── */}
       <div className="mb-14">
-        <SectionTitle>Objective</SectionTitle>
+        <SectionTitle>About</SectionTitle>
         <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
           <p>
-            With experience in Object Detection, Face Recognition, OCR, and deployment on edge devices. Recently expanded into{' '}
-            <strong className="text-foreground">Chatbot Development, RAG/GraphRAG/AgenticRAG</strong>, and Graph Databases.
-            Worked with clients across retail, e-commerce, manufacturing, and recruitment sectors.
+            I am an <strong className="text-foreground">AI Engineer focused on production-grade LLM systems</strong>, from
+            knowledge-base platforms and RAG pipelines to fine-tuning, evaluation, and self-hosted model serving. My recent
+            work centers on enterprise AI products where reliability, privacy, and deployment control matter as much as model
+            quality.
           </p>
           <p>
-            As a <strong className="text-foreground">Team Leader</strong>, I lead cross-functional AI engineering teams, overseeing project planning, system architecture design, and technical execution. I mentor engineers, review technical designs, and ensure best practices in AI development, code quality, and deployment pipelines. 
-            I also collaborate closely with stakeholders and clients to translate business requirements into effective AI solutions.
+            At <strong className="text-foreground">C-OpenAI</strong>, I work on knowledge-base systems, LLM fine-tuning, and
+            self-hosted LLM platforms for <strong className="text-foreground">on-premise Legal-domain applications</strong>.
+            This includes designing secure retrieval flows, adapting open-source models to domain-specific data, and building
+            inference services that can run inside client-controlled infrastructure.
           </p>
           <p>
-            Skilled in designing microservices, logging/monitoring, and mentoring teams. Seeking a dynamic environment to
-            contribute to innovative AI projects, while growing alongside the organization.
+            Previously at <strong className="text-foreground">Sun*</strong>, I led AI engineering teams across chatbot,
+            RAG/GraphRAG/AgenticRAG, document AI, and database-querying products. I handled architecture design, task planning,
+            technical reviews, client collaboration, and mentoring while staying close to implementation details.
           </p>
           <p>
-            In the future, I aspire to gain international experience and achieve higher professional goals. Collaboration and
-            mutual growth are key to creating meaningful success.
-
+            My broader background covers computer vision, OCR, edge AI deployment, Kubernetes-based services, observability,
+            and microservice architecture. I enjoy turning ambiguous business problems into practical AI systems that can be
+            operated, measured, and improved in real production environments.
           </p>
         </div>
       </div>
@@ -158,11 +162,34 @@ export default function AboutPage() {
         <SectionTitle>Work Experience</SectionTitle>
         <div className="space-y-12">
 
+          {/* C-OpenAI */}
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
+              <h3 className="text-base font-semibold text-foreground">C-OpenAI</h3>
+              <span className="text-xs text-muted-foreground font-mono">03/2026 — Present</span>
+            </div>
+            <p className="text-sm font-medium text-blue-500 dark:text-blue-400 mb-3">AI Engineer</p>
+            <BulletList items={[
+              'Developing enterprise knowledge-base systems for Legal-domain workflows with secure retrieval and controlled data access',
+              'Fine-tuning and adapting LLMs for domain-specific tasks, terminology, and document-heavy use cases',
+              'Building self-hosted LLM platforms for on-premise environments where privacy, governance, and deployment control are critical',
+              'Designing RAG pipelines, model-serving flows, and evaluation processes for production-grade LLM applications',
+              'Collaborating on system architecture for legal AI products that combine retrieval, generation, and document understanding',
+            ]} />
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {['Knowledge Base', 'RAG', 'Fine-tuning', 'Self-hosted LLM', 'On-premise', 'Legal AI', 'LLM Serving', 'Model Evaluation'].map((t) => (
+                <span key={t} className="text-xs px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
           {/* Sun* */}
           <div>
             <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
               <h3 className="text-base font-semibold text-foreground">Sun*</h3>
-              <span className="text-xs text-muted-foreground font-mono">04/2024 — Present</span>
+              <span className="text-xs text-muted-foreground font-mono">04/2024 — 03/2026</span>
             </div>
             <p className="text-sm font-medium text-blue-500 dark:text-blue-400 mb-3">AI Engineer</p>
             <BulletList items={[
@@ -242,10 +269,61 @@ export default function AboutPage() {
         <SectionTitle>Projects</SectionTitle>
         <div className="space-y-8">
 
+          {/* C-OpenAI projects */}
+          <div>
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-sm font-semibold text-foreground">C-OpenAI · 04/2026 — Present</h3>
+            </div>
+            <div className="space-y-4">
+              {[
+                {
+                  name: 'Legal Knowledge Base Platform', role: 'AI Engineer', team: null,
+                  desc: 'Built knowledge-base capabilities for legal-domain users, enabling secure search, retrieval, and grounded LLM responses over private enterprise documents.',
+                  bullets: [
+                    'Designed retrieval flows for document-heavy legal content with attention to access control, traceability, and answer grounding.',
+                    'Developed ingestion and indexing components for private knowledge sources.',
+                    'Applied time-series modeling to optimize information update flows and keep the knowledge base current.',
+                    'Improved response quality through retrieval tuning, prompt design, and evaluation loops.',
+                  ],
+                },
+                {
+                  name: 'Agent Summarization', role: 'AI Engineer', team: null,
+                  desc: 'Developed an agent-based summarization system that clusters related content into the same information block before generating concise summaries.',
+                  bullets: [
+                    'Designed content clustering workflows to group semantically related information before summarization.',
+                    'Built agentic summarization flows that summarize by information block instead of processing each content item independently.',
+                    'Integrated self-hosted LLM serving for on-premise environments requiring privacy, governance, and deployment control.',
+                    'Supported fine-tuning workflows for domain-specific behavior and terminology.',
+                    'Improved summary consistency by aggregating related evidence before generation.',
+                  ],
+                },
+              ].map((p) => (
+                <div key={p.name} className="pl-4 border-l-2 border-border">
+                  <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                    <span className="text-sm font-semibold text-foreground">{p.name}</span>
+                    <span className="text-xs text-blue-500 dark:text-blue-400">{p.role}</span>
+                    {p.team && <span className="text-xs text-muted-foreground">· team: {p.team}</span>}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                  {'bullets' in p && p.bullets && (
+                    <ul className="mt-2 space-y-1">
+                      {(p.bullets as string[]).map((b) => (
+                        <li key={b} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
+                          <span className="mt-1.5 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Sun* projects */}
           <div>
             <div className="flex items-baseline justify-between mb-3">
-              <h3 className="text-sm font-semibold text-foreground">Sun* · 04/2024 — Present</h3>
+              <h3 className="text-sm font-semibold text-foreground">Sun* · 04/2024 — 03/2026</h3>
             </div>
             <div className="space-y-4">
               {[
