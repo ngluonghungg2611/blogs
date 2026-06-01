@@ -134,15 +134,16 @@ export default function AboutPage() {
         <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
           <p>
             I am an <strong className="text-foreground">AI Engineer focused on production-grade LLM systems</strong>, from
-            knowledge-base platforms and RAG pipelines to fine-tuning, evaluation, and self-hosted model serving. My recent
-            work centers on enterprise AI products where reliability, privacy, and deployment control matter as much as model
-            quality.
+            legal knowledge-base platforms and GraphRAG retrieval to agentic summarization, fine-tuning, evaluation, and
+            self-hosted model serving. My recent work centers on enterprise AI products where reliability, privacy, access
+            control, and deployment ownership matter as much as model quality.
           </p>
           <p>
             At <strong className="text-foreground">C-OpenAI</strong>, I work on knowledge-base systems, LLM fine-tuning, and
             self-hosted LLM platforms for <strong className="text-foreground">on-premise Legal-domain applications</strong>.
-            This includes designing secure retrieval flows, adapting open-source models to domain-specific data, and building
-            inference services that can run inside client-controlled infrastructure.
+            This includes designing GraphRAG retrieval with ACL-aware access control, applying time-series techniques to keep
+            knowledge sources up to date, clustering related content for agent-based summarization, and building inference
+            services that can run inside client-controlled infrastructure.
           </p>
           <p>
             Previously at <strong className="text-foreground">Sun*</strong>, I led AI engineering teams across chatbot,
@@ -170,14 +171,14 @@ export default function AboutPage() {
             </div>
             <p className="text-sm font-medium text-blue-500 dark:text-blue-400 mb-3">AI Engineer</p>
             <BulletList items={[
-              'Developing enterprise knowledge-base systems for Legal-domain workflows with secure retrieval and controlled data access',
-              'Fine-tuning and adapting LLMs for domain-specific tasks, terminology, and document-heavy use cases',
-              'Building self-hosted LLM platforms for on-premise environments where privacy, governance, and deployment control are critical',
-              'Designing RAG pipelines, model-serving flows, and evaluation processes for production-grade LLM applications',
-              'Collaborating on system architecture for legal AI products that combine retrieval, generation, and document understanding',
+              'Developing Legal-domain knowledge-base systems with GraphRAG retrieval, ACL-aware access control, and grounded LLM responses',
+              'Applying time-series techniques to optimize information update flows and keep private knowledge sources current',
+              'Building agentic summarization workflows that cluster related content into coherent information blocks before generation',
+              'Fine-tuning and adapting LLMs for domain-specific terminology, summarization behavior, and document-heavy use cases',
+              'Integrating self-hosted LLM serving for on-premise environments where privacy, governance, and deployment control are critical',
             ]} />
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {['Knowledge Base', 'RAG', 'Fine-tuning', 'Self-hosted LLM', 'On-premise', 'Legal AI', 'LLM Serving', 'Model Evaluation'].map((t) => (
+              {['Knowledge Base', 'GraphRAG', 'ACL', 'Time Series', 'Agent Summarization', 'Fine-tuning', 'Self-hosted LLM', 'On-premise', 'Legal AI', 'LLM Serving'].map((t) => (
                 <span key={t} className="text-xs px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                   {t}
                 </span>
