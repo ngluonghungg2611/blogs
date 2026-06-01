@@ -165,7 +165,7 @@ export default function AboutPage() {
           {/* C-OpenAI */}
           <div>
             <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
-              <h3 className="text-base font-semibold text-foreground">C-OpenAI</h3>
+              <h3 className="text-base font-semibold text-foreground">C-OpenAI (CMC Corp)</h3>
               <span className="text-xs text-muted-foreground font-mono">03/2026 — Present</span>
             </div>
             <p className="text-sm font-medium text-blue-500 dark:text-blue-400 mb-3">AI Engineer</p>
@@ -272,7 +272,7 @@ export default function AboutPage() {
           {/* C-OpenAI projects */}
           <div>
             <div className="flex items-baseline justify-between mb-3">
-              <h3 className="text-sm font-semibold text-foreground">C-OpenAI · 04/2026 — Present</h3>
+              <h3 className="text-sm font-semibold text-foreground">C-OpenAI (CMC Corpg) · 04/2026 — Present</h3>
             </div>
             <div className="space-y-4">
               {[
