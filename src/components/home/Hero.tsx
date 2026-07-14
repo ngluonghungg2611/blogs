@@ -25,13 +25,13 @@ export function Hero() {
           </Link>
           <Link
             href="/projects"
-            className="px-5 py-2.5 rounded-lg border border-neutral-700 hover:bg-neutral-800 text-white text-sm font-semibold transition-colors"
+            className="px-5 py-2.5 rounded-lg border border-neutral-700 hover:bg-blue-600 hover:border-blue-600 text-white text-sm font-semibold transition-colors"
           >
             View Projects
           </Link>
           <Link
             href="/about"
-            className="px-5 py-2.5 rounded-lg border border-neutral-700 hover:bg-neutral-800 text-white text-sm font-semibold transition-colors"
+            className="px-5 py-2.5 rounded-lg border border-neutral-700 hover:bg-blue-600 hover:border-blue-600 text-white text-sm font-semibold transition-colors"
           >
             About Me
           </Link>
