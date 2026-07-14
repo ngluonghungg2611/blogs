@@ -40,3 +40,5 @@ bentech-blogs/
 
 # Docker (không cần cho Vercel)
 # Dockerfile và docker-compose.yml vẫn được track nếu muốn
+
+.superpowers/
