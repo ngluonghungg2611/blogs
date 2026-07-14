@@ -42,3 +42,4 @@ bentech-blogs/
 # Dockerfile và docker-compose.yml vẫn được track nếu muốn
 
 .superpowers/
+tsconfig.tsbuildinfo
