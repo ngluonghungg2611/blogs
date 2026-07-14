@@ -19,7 +19,7 @@ export function Hero() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/blog"
-            className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+            className="px-5 py-2.5 rounded-lg border border-neutral-700 hover:bg-blue-600 hover:border-blue-600 text-white text-sm font-semibold transition-colors"
           >
             View Blog
           </Link>
